@@ -8,7 +8,7 @@ A single-page, mobile-first study tool for the Cisco **CCNP/CCIE Enterprise Core
 
 | Tab | What it does |
 |---|---|
-| 🗺️ Overview | Domain weights, an "Am I ready to pass?" panel, per-sub-objective scores, ~45 deep-dive panels with 59 diagrams (step-by-step flows for SD-WAN bring-up, SD-Access/LISP lookup, OSPF LSAs, STP, PIM-SM, PTP, IKE, NETCONF, EEM…), "what's wrong here?" exhibits and complete config samples with verify commands |
+| 🗺️ Overview | Domain weights, an "Am I ready to pass?" panel, per-sub-objective scores, ~45 deep-dive panels with 70 diagrams (step-by-step flows for SD-WAN bring-up, SD-Access/LISP lookup, OSPF LSAs, STP, PIM-SM, PTP, IKE, NETCONF, EEM…), "what's wrong here?" exhibits and complete config samples with verify commands |
 | 🃏 Trigger cards | 223 requirement → solution flip cards with spaced repetition (10 min → 1 h → 1 day → 3 days) and diagrams on the back |
 | 🎯 Scenario quiz | 274 questions: single choice, choose two, ordering, matching, show-output and exhibit questions, with a "why not" reason for most wrong options. Modes: Practice, Retry wrong, Weak topics, a **timed mock exam** (100 questions weighted like the blueprint, 120 min, unseen questions first) and a **Final check** of 30 held-back questions |
 | 🔢 Numbers | Ports, protocol numbers, timers, defaults, DSCP/AF grid, OSPF/EIGRP/BGP values, FHRP/multicast addresses, API paths, HTTP codes, grouped by domain and tagged with blueprint numbers |
