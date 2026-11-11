@@ -137,7 +137,7 @@ pre.code b{color:var(--c3);font-weight:500}pre.code i{color:var(--mute);font-sty
 
 <main>
 <section class="view on" id="v-map">
-  <p class="hint">Domain weights from the official v1.2 blueprint. Tap a domain to study only its cards. Source tags: <b>OCG</b> = ENCOR Official Cert Guide 2nd ed (chapter shown per sub-objective) · <b>CRAM</b> = ENCOR Exam Cram · <b>INE</b> = INE ENCOR v1.2 course · <b>PCG</b> = Portable Command Guide · <b>CISCO-DS</b> = Cisco Catalyst Center data sheet</p>
+  <p class="hint">Domain weights from the official v1.2 blueprint. Tap a domain to study only its cards. Source tags: <b>OCG</b> = ENCOR Official Cert Guide 2nd ed (chapter shown per sub-objective) · <b>CRAM</b> = ENCOR Exam Cram · <b>INE</b> = INE ENCOR v1.2 course · <b>PCG</b> = Portable Command Guide · <b>CISCO-DS</b> = Cisco Catalyst Center data sheet · <b>31D</b> = 31 Days Before Your CCNP/CCIE Enterprise Core Exam · <b>WEB</b> = checked against current Cisco docs (newer than the books)</p>
   <div id="domains"></div>
 
   <details class="sec ready" open><summary>🎯 Am I ready to pass? <span class="src">blueprint v1.2</span></summary>
@@ -1498,7 +1498,7 @@ const C0=[
 ["IKE phases","Phase 1 = IKE SA (authenticate peers, UDP 500). Phase 2 = IPsec SAs (transform set)","IKEv2 uses IKE_SA_INIT + IKE_AUTH; NAT-T moves to UDP 4500.","OCG","2.2b"],
 ["Route-based alternative to crypto maps","Static VTI: 'tunnel mode ipsec ipv4' + 'tunnel protection ipsec profile'","A routable tunnel interface that runs routing protocols.","OCG","2.2b"],
 ["LISP separates which two things?","Identity (EID) from location (RLOC)","The endpoint keeps its IP; the mapping system tracks where it is.","OCG · INE","2.3a"],
-["LISP routers at a site edge","ITR encapsulates, ETR decapsulates, xTR does both; PxTR links to non-LISP sites","Map Server stores registrations, Map Resolver answers requests.","OCG","2.3a"],
+["LISP routers at a site edge","ITR encapsulates, ETR decapsulates, xTR does both; PxTR links to non-LISP sites","Map Server stores registrations, Map Resolver answers requests.","OCG · 31D","2.3a"],
 ["How does an ETR tell the mapping system about its EIDs?","Map-Register to the Map Server","ITRs send Map-Requests to the Map Resolver and get a Map-Reply with the RLOC.","OCG","2.3a"],
 ["LISP ports","Control UDP 4342, data UDP 4341","Data is IP-in-UDP. SD-Access keeps the LISP control plane but uses VXLAN for data.","OCG","2.3a"],
 ["Need more than 4094 segments in an overlay","VXLAN: 24-bit VNI → about 16 million segments","VLAN IDs are 12-bit (4094).","OCG","2.3b"],
@@ -1584,7 +1584,7 @@ C0.push(
 ["Send flows to a collector","flow exporter: destination IP, transport udp PORT, export-protocol netflow-v9 or ipfix","Then reference the exporter in the monitor.","OCG","4.2"],
 ["Verify Flexible NetFlow locally","show flow monitor NAME cache / show flow exporter statistics","The cache shows current flows.","PCG","4.2"],
 ["Copy traffic to an analyzer on the same switch","Local SPAN: monitor session 1 source … / destination interface …","The destination port stops normal forwarding.","OCG","4.3"],
-["Analyzer sits on another switch in the same L2 domain","RSPAN: a dedicated 'remote-span' VLAN carried over trunks","Source switch: destination remote vlan X. Destination switch: source remote vlan X.","OCG","4.3"],
+["Analyzer sits on another switch in the same L2 domain","RSPAN: a dedicated 'remote-span' VLAN carried over trunks","Source switch: destination remote vlan X. Destination switch: source remote vlan X. Define the VLAN on every switch in the path.","OCG · 31D","4.3"],
 ["Analyzer sits across a routed network","ERSPAN: GRE-encapsulated mirror (erspan-id, origin IP, destination IP)","Works across Layer 3.","OCG","4.3"],
 ["Mirror only the traffic a port receives","monitor session 1 source interface g1/0/1 rx","Options rx, tx, both (default both).","PCG","4.3"],
 ["Test reachability to an ISP target every 10 s","ip sla 1 / icmp-echo 8.8.8.8 source-interface g0/0 / frequency 10 + ip sla schedule 1 life forever start-time now","Without the schedule the probe never runs.","PCG","4.4"],
@@ -1879,7 +1879,7 @@ Q0.push(
 ["Which model family is vendor-neutral and written by network operators?",["OpenConfig","Cisco native","SNMP MIBs","CLI parsers"],0,"IETF models are standards too; native models cover every Cisco feature. (OCG)","6.3"],
 ["Which YANG node groups related nodes but holds no value itself?",["container","leaf","typedef","enum"],0,"A leaf holds the value. (OCG)","6.3"],
 ["Which Catalyst Center call retrieves the device list?",["GET /dna/intent/api/v1/network-device","POST /dna/system/api/v1/auth/token","GET /dataservice/device","GET /restconf/data/ietf-interfaces:interfaces"],0,"/dataservice is SD-WAN Manager; the token call only authenticates. (INE)","6.4"],
-["Which Catalyst Center API category connects to IT service management tools such as ServiceNow?",["Integration API","Intent API","Multivendor SDK","Southbound API"],0,"Intent API is for scripts; Integration API for ITSM/IPAM. (CRAM)","6.4"],
+["Which Catalyst Center API category connects to IT service management tools such as ServiceNow?",["Integration API","Intent API","Multivendor SDK","Southbound API"],0,"Intent API is for scripts; Integration API (westbound) for ITSM/IPAM. (CRAM · 31D)","6.4"],
 ["Where is the SD-WAN Manager API documentation hosted?",["https://&lt;manager&gt;/apidocs","Only on DevNet","On the WAN Edge","/restconf/docs"],0,"The docs ship with the Manager. (CRAM)","6.4"],
 ["What is the API between Catalyst Center and the network devices called?",["Southbound","Northbound","Eastbound","Intent"],0,"Northbound faces apps and scripts. (CRAM)","6.4"],
 ["A RESTCONF GET returns 404. Meaning?",["The resource (URI path) wasn't found","Not authenticated","Server error","Created"],0,"Check the module name and path. (OCG)","6.5"],
@@ -2325,6 +2325,45 @@ Q0.push(
 );
 Object.assign(QD,{"Exhibit: Which part of this design":["q","xlsp"],"Exhibit: A new WAN Edge":["q","xsdw"],"Exhibit: A host moves from Edge 1":["q","xsda"],"Exhibit: Po1 comes up":["q","xpo"]});
 
+// ---- v1.5.0: web-checked v1.2 topics (WEB), thin topics, 31 Days cross-check (31D) ----
+C0.push(
+["Catalyst Center AI feature that profiles endpoints and flags spoofing","AI Endpoint Analytics: smart grouping, trust score, spoofing detection, ISE integration","Groups similar endpoints with ML and spots a device whose behavior no longer fits its profile. (Cisco data sheet / Cisco Live 2025)","WEB","4.5"],
+["Catalyst Center API token lifetime","About 1 hour; then POST /dna/system/api/v1/auth/token again","A script that worked and then gets 401 usually holds an expired token.","WEB","6.4"],
+["SD-WAN Manager API: GETs work, POST/PUT/DELETE fail","Add the X-XSRF-TOKEN header from GET /dataservice/client/token","Login = POST /j_security_check → JSESSIONID cookie; changes also need the XSRF token. Release 20.18+ adds JWT bearer tokens.","WEB","6.4"],
+["Catalyst Center API families (31 Days view)","Intent API = northbound REST · Integration API = westbound (ITSM) · Events & Notifications · Multivendor SDK · southbound to devices","Scripts use the Intent API; ServiceNow-style tools use the Integration API.","31D · CRAM","6.4"],
+["PTP clock modes on Catalyst 9000 switches","Boundary or transparent clock; one PTP domain; Network Advantage license","Transparent mode doesn't sync across VLANs, so use boundary mode for inter-VLAN timing. Verify with show ptp clock / brief / parent.","WEB","3.3a"],
+["RSPAN VLAN rules","vlan X / remote-span on every switch in the path; keep it off access ports","Source switch: destination remote vlan X. Destination switch: source remote vlan X.","31D · INE","4.3"],
+["ERSPAN session sends nothing although IPs ping","Sessions start shut down: add no shutdown; erspan-id must match on both ends","The copies ride in GRE (IP 47), so the origin and destination IPs need routed reachability.","OCG · INE","4.3"]
+);
+Object.assign(DG,{
+x54:{h:200,n:[["ise",180,25,"ISE"],["acc",60,95,"Access SW"],["dist",190,95,"Distribution"],["fw",305,95,"Firewall"],["h",60,160,"Host · SGT 10"],["srv",305,160,"Server · SGT 20"]],l:[["ise","acc","d","assigns SGT"],["acc","dist"],["dist","fw"],["h","acc"],["fw","srv"]],t:[[180,190,"access → firewall: IP-to-SGT bindings via SXP (TCP 64999)","g",1]]}
+});
+Q0.push(
+// 2.3a LISP
+["A Map Server receives a Map-Register from an ETR. What does it do with it?",["Keeps the ETR's EID-to-RLOC entries","Answers the ITR's Map-Request directly||The Map Resolver takes requests.","Encapsulates user data toward the ETR||Map Servers carry no user data.","Floods the EID prefixes to all ITRs||LISP is pull-based; nothing is flooded."],0,"Map Servers keep the registrations; Map Resolvers take the requests. They often run together as an MS/MR. (OCG · 31D)","2.3a"],
+["Why is the LISP control plane often compared to DNS?",["It looks up an EID's RLOC only on demand (pull)","It pushes all prefixes to every router ahead of time||That's how BGP and OSPF work.","It uses DNS servers to find the ETR addresses||Only the idea is similar.","It replaces IP addresses with host names||EIDs are still IP addresses."],0,"Like DNS resolving a name, an ITR asks the mapping system where an EID is, and only for traffic it actually has. (OCG)","2.3a"],
+["A non-LISP site must reach EIDs in a LISP site. Which device attracts and encapsulates that traffic?",["Proxy ITR (PITR)","Proxy ETR (PETR)||Handles traffic leaving LISP sites toward non-LISP sites.","Map Resolver||Answers map requests; carries no data.","ETR at the LISP site||Non-LISP routers can't encapsulate to it."],0,"A PITR advertises the EID space toward non-LISP networks and encapsulates their traffic; a PxTR does both PITR and PETR jobs. (OCG · CRAM · 31D)","2.3a"],
+// 4.3 SPAN
+["Which statement about an RSPAN VLAN is correct?",["It's needed on every switch in the path","It must be the native VLAN on the trunks||Any VLAN ID works; it's carried tagged.","It's created only on the source switch||Transit and destination switches need it too.","It also carries normal user traffic||It's reserved for the mirrored copies."],0,"Create it with remote-span on all switches in the path and keep it off access ports. (31D · INE)","4.3"],
+["ERSPAN source and destination sessions use erspan-id 10, and the two IPs ping each other. The analyzer still sees nothing. What's missing?",["no shutdown on the ERSPAN sessions","An RSPAN VLAN on both switches||ERSPAN uses GRE, not a VLAN.","A trunk between the two switches||ERSPAN is routed (Layer 3).","A matching VLAN on the analyzer port||The destination port stays access."],0,"ERSPAN sessions start administratively shut; enable each one with no shutdown. Endpoints also need IP reachability and the same erspan-id. (OCG · INE)","4.3"],
+["Can one RSPAN or ERSPAN source session monitor source ports and source VLANs at the same time?",["No: ports or VLANs, not both","Yes: any mix of ports and VLANs works||Not both in one session.","Only if the session is ERSPAN||RSPAN source sessions follow the same rule.","Only if the VLANs are on trunk ports||The rule doesn't depend on the port mode."],0,"Each source session takes either ports or VLANs as sources. (31D · CRAM)","4.3"],
+// 6.2 JSON
+["How many items does the 'interfaces' array hold?"+P("{\n  \"device\": \"R1\",\n  \"interfaces\": [\n    {\"name\": \"Gi1\", \"vlans\": [10, 20]},\n    {\"name\": \"Gi2\", \"vlans\": []},\n    {\"name\": \"Lo0\"}\n  ]\n}"),["3","2||Lo0 is an item too, even without vlans.","4||There are three objects in the array.","5||The VLAN numbers belong to each item's own array."],0,"Each {…} inside [ ] is one item; nested arrays don't add items to the outer array. (OCG · CRAM)","6.2"],
+["What makes this JSON invalid?"+P("{\n  \"hostname\": \"R1\",\n  \"mgmt_ip\": \"10.0.0.1\",   // management\n  \"enabled\": true\n}"),["The // comment","\"enabled\": true||Lowercase true is valid.","\"hostname\": \"R1\"||Quoted key and string: valid.","The brace nesting||One object; the braces match."],0,"JSON has no comments. Strings and keys use double quotes; booleans are lowercase. (INE · OCG)","6.2"],
+["What JSON type is the value in \"vlans\": [10, 20]?",["An array of numbers","An object with two keys||Objects use braces and keys.","A string||There are no quotes around it.","A tuple||JSON has no tuples."],0,"[ ] = array (ordered values); here the values are numbers, so no quotes. (OCG · 31D)","6.2"],
+// 6.4 APIs
+["Which Catalyst Center API family serves this call?"+P("GET /dna/intent/api/v1/network-device?hostname=C9300-1\n{\"response\": [{\"hostname\": \"C9300-1\",\n  \"managementIpAddress\": \"10.1.1.5\",\n  \"reachabilityStatus\": \"Reachable\"}],\n \"version\": \"1.0\"}"),["The northbound Intent API","The southbound device API||Devices don't serve /dna/intent.","The westbound Integration API||That connects ITSM tools.","Events and Notifications||That pushes events to webhooks."],0,"/dna/intent/… = Intent API (northbound REST, Know Your Network → Devices). Results come wrapped in a 'response' list. (31D · CRAM)","6.4"],
+["A script logs in to SD-WAN Manager. Its GETs work, but every POST is refused with 403. What's missing?",["The X-XSRF-TOKEN from /dataservice/client/token","A new JSESSIONID cookie for each POST||One session cookie serves all calls.","The X-Auth-Token from /dna/system/api/v1/auth/token||That's Catalyst Center.","Basic auth on every POST request||The session cookie authenticates."],0,"Login (POST /j_security_check) gives a JSESSIONID; changes also need the XSRF token fetched with that session. 20.18+ also offers JWT bearer tokens. (WEB · OCG)","6.4"],
+["How long is a Catalyst Center API token valid?",["About 1 hour","24 hours||Shorter than that.","Until the GUI session ends||API tokens are separate.","Forever, until revoked||Tokens expire."],0,"After about an hour, request a new one from /dna/system/api/v1/auth/token; an expired token gives 401. (WEB)","6.4"],
+// 4.5 exhibit
+["Which Catalyst Center capability raised this alert?"+P("Endpoint 00:11:22:33:44:55\n  Profile:     IP Phone  →  now behaves like Windows Workstation\n  Trust score: 3 / 10\n  Alert:       Spoofing suspected"),["AI Endpoint Analytics","Machine Reasoning Engine||Root-cause workflows, not endpoint profiling.","SWIM||Image management.","Path Trace||Shows one flow's path."],0,"AI Endpoint Analytics profiles and groups endpoints, scores trust and flags spoofing; it works with ISE to act on it. (WEB)","4.5"],
+// 5.4 exhibit
+["Exhibit: The access switch can't insert SGTs in hardware. How does the firewall still enforce SGT 10 → SGT 20 policy?",["SXP sends the IP-to-SGT bindings","ISE forwards every packet to the firewall||ISE is the policy server, not in the data path.","MACsec carries the SGT across the access link||MACsec encrypts; it doesn't share bindings.","The firewall reads the VLAN tag as the SGT||VLANs aren't SGTs."],0,"With SXP (TCP 64999) the speaker shares IP-to-SGT bindings with a listener that can enforce SGACLs or firewall policy. (CRAM · OCG)","5.4"],
+// 3.3a web
+["PTP endpoints sit in two VLANs on a Catalyst 9300 and must sync to one grandmaster. Which PTP mode?",["Boundary clock mode","Transparent clock mode||On Catalyst 9000 it doesn't sync across VLANs.","NTP master mode||NTP isn't PTP.","Slave-only ordinary clock||The switch must serve others."],0,"Catalyst 9000 supports boundary and transparent modes; only boundary mode syncs across VLANs. (WEB)","3.3a"]
+);
+Object.assign(QD,{"Exhibit: The access switch can't insert":["q","x54"]});
+
 // ---- quiz polish 3: answer-length balance (t), why-not reasons (w), fuller explanations (e) ----
 // t: {index: new display text} keeps any "||reason"; w: reasons by option index (only added where missing); e: new explanation
 const QF3={
@@ -2419,7 +2458,7 @@ const QF3={
 "Which SNMP notification does the manager":{w:["","No acknowledgment.","A reply to a Get.","A write request."]},
 "In Flexible NetFlow, which command defines a key":{t:{1:"collect counter bytes long"},w:["","collect = non-key field.","Exporter destination.","Exporter format."]},
 "The analyzer is in another building":{w:["","Layer 2 only.","Same switch only.","Unrelated to mirroring."]},
-"What does RSPAN require":{e:"RSPAN carries mirrored traffic in a remote-span VLAN across Layer 2 trunks; ERSPAN uses GRE across Layer 3. (OCG)"},
+"What does RSPAN require":{e:"RSPAN carries mirrored traffic in a remote-span VLAN across Layer 2 trunks; ERSPAN uses GRE across Layer 3. (OCG · 31D)"},
 "What happens to a SPAN destination port":{t:{0:"Only mirrored copies; no normal switching"}},
 "An IP SLA operation is configured, but 'show ip sla":{w:["","Tracking uses results; it doesn't start probes.","Needed on the target for some operations only.","Has a default; not required."]},
 "How does IP SLA remove a static route":{t:{0:"The route refers to a track object following the SLA"}},
@@ -2508,7 +2547,7 @@ const QF3={
 "Exhibit: R1 and R2 never become OSPF":{t:{0:"The link ends are in different areas"},e:"The area ID travels in every hello and must match on a link, or no neighbor forms. (OCG)"},
 "Exhibit: To stop Host A":{t:{0:"Host A loses everything behind R1"}},
 "Exhibit: Users get no Internet":{t:{0:"Inside and outside are swapped"}},
-"Exhibit: SW1 logs a CDP":{t:{0:"Untagged frames would cross VLANs; PVST+ blocks them"}},
+"Exhibit: SW1 logs a CDP":{t:{0:"Native VLANs leak, so PVST+ blocks them",2:"All tagged VLAN traffic stops crossing the trunk||Only the two native VLANs (1 and 99) are affected."}},
 "Which two must match for two OSPF routers":{e:"Area, hello/dead timers, subnet, authentication and stub flags must match; router IDs must differ. (OCG)"},
 "OSPFv3 on IOS XE: how do you summarize":{t:{0:"area 1 range 2001:db8:1::/48 in the IPv6 AF"}},
 "Which statement compares eBGP and iBGP":{t:{0:"eBGP: TTL 1, AD 20; iBGP: AD 200"}},
@@ -2525,10 +2564,14 @@ Q0.forEach(q=>{for(const k in QF3)if(q[0].startsWith(k)){const f=QF3[k];
   if(f.w)f.w.forEach((r,i)=>{if(r&&q[1][i]!==undefined&&!q[1][i].includes("||"))q[1][i]+="||"+r});
   if(f.e)q[3]=f.e;}});
 
+// Permanent IDs: when a question or card text changes, map its new text-hash key to the original key here,
+// so saved progress and Final-check membership stay with the item. build/check fails if a locked key vanishes.
+const KEYFIX={"q888du6":"q8cbrdt","qrtm6iz":"qci0amc","qex5ivp":"q1cyr3l5","q130ywy9":"q19sii74","q1iuinrm":"q1ihg0t8","q19vzjnk":"q1t0xpto"};
+
 // ---- build C / Q with domain derived from the sub-objective; stable text-hash keys ----
 const hsh=s=>{let x=5381;for(let i=0;i<s.length;i++)x=((x<<5)+x+s.charCodeAt(i))|0;return (x>>>0).toString(36)};
-const C=C0.map(c=>{const r=[DOM(c[4]),c[0],c[1],c[2],c[3],c[4]];r.k="c"+hsh(c[0]);return r});
-const Q=Q0.map(q=>{const r=[DOM(q[4]),q[0],q[1],q[2],q[3],q[4]];r.k="q"+hsh(q[0]);return r});
+const C=C0.map(c=>{const r=[DOM(c[4]),c[0],c[1],c[2],c[3],c[4]];r.k=KEYFIX["c"+hsh(c[0])]||"c"+hsh(c[0]);return r});
+const Q=Q0.map(q=>{const r=[DOM(q[4]),q[0],q[1],q[2],q[3],q[4]];r.k=KEYFIX["q"+hsh(q[0])]||"q"+hsh(q[0]);return r});
 const OCGCH={"1.1a":"22","1.1b":"22","1.2":"23","1.3":"23","1.4":"14","2.1":"27","2.2a":"6","2.2b":"16","2.3a":"16","2.3b":"16","3.1a":"5","3.1b":"5","3.1c":"2–4","3.2a":"7–8","3.2b":"8–10","3.2c":"11–12","3.2d":"6","3.3a":"15 (PTP: INE)","3.3b":"15","3.3c":"15","3.3d":"13","4.1":"24","4.2":"24","4.3":"24","4.4":"24","4.5":"24","4.6":"28","5.1":"26","5.2a":"26","5.2b":"26","5.3":"28","5.4":"25","6.1":"28","6.2":"28","6.3":"28","6.4":"28","6.5":"28","6.6":"29","6.7":"29"};
 const chap=o=>"OCG ch "+OCGCH[o];
 const ot=o=>String(o).split("||")[0], orsn=o=>String(o).split("||")[1]||"";
@@ -2793,8 +2836,10 @@ document.getElementById("sq").addEventListener("input",doSearch);
 domains();qFilters();qStart();readiness();coverage();
 
 // ---- versioning: bump APP_VER and add a CHANGELOG entry on every release ----
-const APP_VER="1.4.2",APP_DATE="2026-11-11";
+const APP_VER="1.5.1",APP_DATE="2026-11-11";
 const CHANGELOG=[
+["1.5.1","2026-11-11","Audit follow-up: native VLAN mismatch answer reworded and its distractor reason corrected (only the two native VLANs are blocked)."],
+["1.5.0","2026-11-11","Permanent question IDs: rewording no longer resets progress (the 6 reworded questions got their history back). Web check of Catalyst Center AI, Catalyst Center and SD-WAN Manager APIs and PTP on Catalyst 9000 (WEB tag). New questions for LISP, SPAN, JSON and the APIs, plus exhibits for 4.5, 5.4 and 6.4. Cross-checked with the 31 Days book (31D tag)."],
 ["1.4.2","2026-11-11","Full question audit: native VLAN answer now matches its explanation, HSRP exhibit states the peer's preempt, three drag-and-drop orders without interchangeable steps (NetFlow, IP SLA, SSH), LLQ exhibit states the 10 Mbps link, wireless reference removed, OSPF distractor reason fixed."],
 ["1.4.1","2026-11-11","Fixes from two external audits, each claim checked first: EIGRP all-links exhibit, HSRP exhibit IP, IP SLA source-interface, native VLAN mismatch vs PVST+ (*PVID_Inc), GLBP and VRRPv3 IPv6 MACs, NAT UDP/ICMP timeouts, MACsec total overhead, EEM sync/skip wording, RESTCONF URL, disable-connected-check, plus small clarifications."],
 ["1.4.0","2026-11-11","Mock exam and Final check review now shows every option: your wrong picks marked ✗ with the reason, the right answer ✓, missed choices, your order and your matches. Version number and changelog added."],
