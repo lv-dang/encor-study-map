@@ -2740,26 +2740,32 @@ function quiz(){
   else if(t=="match"){const pairs=q[2].map(o=>o.split("=>")),rights=shuf(pairs.map(p=>p[1]));opts=shuf(pairs.map((p,j)=>({l:p[0],r:p[1],j})));
     body=opts.map((o,k)=>`<div class="mrow"><span>${o.l}</span><select class="msel" data-k="${k}"><option value="">choose…</option>${rights.map(r=>`<option>${r}</option>`).join("")}</select></div>`).join("")}
   else{opts=shuf(q[2].map((o,j)=>({o:ot(o),why:orsn(o),ok:t=="single"?j==q[3]:q[3].includes(j)})));body=opts.map((o,k)=>`<button class="opt" data-k="${k}">${t=="multi"?"☐ ":""}${o.o}</button>`).join("")}
-  box.innerHTML=head+`<div class="scen">${q[1]}</div>${dq}${tag}${body}${t!="single"?`<button class="next" id="chk" style="display:${t=="multi"||t=="match"?"block":"none"}">Check answer</button>`:""}<div id="qx" class="why" style="display:none;background:var(--panel2);border-radius:12px;padding:12px;margin:4px 0 6px"></div><button class="next" id="nx">${mock&&qi==qorder.length-1?"Finish exam":"Next →"}</button>`;
-  const btns=[...box.querySelectorAll(".opt")];let done=false,sel=[],why="";
+  box.innerHTML=head+`<div class="scen">${q[1]}</div>${dq}${tag}${body}<button class="next" id="chk">Check answer</button><div id="qx" class="why" style="display:none;background:var(--panel2);border-radius:12px;padding:12px;margin:4px 0 6px"></div><button class="next" id="nx">${mock&&qi==qorder.length-1?"Finish exam":"Next →"}</button>`;
+  const btns=[...box.querySelectorAll(".opt")];let done=false,sel=[],why="",grade=()=>{};
+  const setReady=r=>{if(done)return;if(mock)document.getElementById("nx").style.display=r?"block":"none";else if(t=="single"){if(r)grade()}else document.getElementById("chk").style.display=r?"block":"none"};
+  const explore=k=>{const b=btns[k];b.classList.add(opts[k].ok?"r":"w");if(!opts[k].ok&&opts[k].why){let e=document.getElementById("qx2");
+    if(!e){e=document.createElement("div");e.id="qx2";e.style.cssText="margin:6px 0;color:#f3c1c1";document.getElementById("qx").prepend(e)}e.innerHTML=`<b>Also wrong:</b> “${opts[k].o}”: ${opts[k].why}`}};
   const finish=ok=>{done=true;if(mock){mock.ans[id]=ok;(mock.pk=mock.pk||{})[id]={t,opts,sel:sel.slice()};record(id,ok);document.getElementById("nx").style.display="block";const c=document.getElementById("chk");if(c)c.style.display="none";btns.forEach(b=>b.disabled=true);return}
     qn++;if(ok)qr++;record(id,ok);upd();
     const x=document.getElementById("qx");x.innerHTML=`<b style="color:${ok?"var(--ok)":"var(--bad)"}">${ok?"Correct.":"Not quite."}</b> ${t!="single"?`<div style="margin:6px 0"><b>Answer:</b> ${qanswer(q)}</div>`:""}${why?`<div style="margin:6px 0;color:#f3c1c1"><b>Why not your pick:</b> ${why}</div>`:""}${q[4]}${qd?`<div style="margin-top:10px">${drawDG(qd[1])}</div>`:""}`;x.style.display="block";
     const c=document.getElementById("chk");if(c)c.style.display="none";document.getElementById("nx").style.display="block"};
-  if(t=="single")btns.forEach((b,k)=>b.onclick=()=>{if(done)return;sel=[k];const ok=opts[k].ok;if(!ok&&opts[k].why)why=`“${opts[k].o}”: ${opts[k].why}`;if(mock){b.classList.add("sel")}else{if(!ok)b.classList.add("w");btns[opts.findIndex(o=>o.ok)].classList.add("r")}finish(ok)});
-  if(t=="match"){const sels=[...box.querySelectorAll(".msel")];document.getElementById("chk").onclick=()=>{if(done)return;if(sels.some(x=>!x.value)){document.getElementById("chk").textContent="Match every row first";return}
-    const ok=sels.every((x,k)=>x.value==opts[k].r);sels.forEach((x,k)=>{x.disabled=true;if(!mock)x.parentNode.classList.add(x.value==opts[k].r?"r":"w")});
+  if(t=="single"){btns.forEach((b,k)=>b.onclick=()=>{if(done){if(!mock)explore(k);return}sel=[k];btns.forEach(x=>x.classList.remove("sel"));b.classList.add("sel");setReady(true)});
+    grade=()=>{if(done||!sel.length)return;const k=sel[0],ok=opts[k].ok;if(!ok&&opts[k].why)why=`“${opts[k].o}”: ${opts[k].why}`;
+      if(!mock){btns[k].classList.remove("sel");if(!ok)btns[k].classList.add("w");btns[opts.findIndex(o=>o.ok)].classList.add("r")}finish(ok)}}
+  if(t=="match"){const sels=[...box.querySelectorAll(".msel")];sels.forEach((x,k)=>x.onchange=()=>{if(done){if(!mock){x.parentNode.classList.remove("r","w");x.parentNode.classList.add(x.value==opts[k].r?"r":"w")}return}setReady(sels.every(y=>y.value))});grade=()=>{if(done||sels.some(x=>!x.value))return;
+    const ok=sels.every((x,k)=>x.value==opts[k].r);sels.forEach((x,k)=>{if(mock)x.disabled=true;else x.parentNode.classList.add(x.value==opts[k].r?"r":"w")});
     if(!ok&&!mock)why=sels.map((x,k)=>x.value!=opts[k].r?`${opts[k].l} → ${opts[k].r}`:"").filter(Boolean).join(" · ")&&"Correct pairs you missed: "+sels.map((x,k)=>x.value!=opts[k].r?`${opts[k].l} → ${opts[k].r}`:"").filter(Boolean).join(" · ");sel=sels.map(x=>x.value);finish(ok)}}
-  if(t=="multi"){btns.forEach((b,k)=>b.onclick=()=>{if(done)return;if(sel.includes(k)){sel=sel.filter(x=>x!=k);b.classList.remove("sel");b.innerHTML="☐ "+opts[k].o}else if(sel.length<q[3].length){sel.push(k);b.classList.add("sel");b.innerHTML="☑ "+opts[k].o}});
-    document.getElementById("chk").onclick=()=>{if(done||sel.length!=q[3].length)return;const ok=sel.every(k=>opts[k].ok);
+  if(t=="multi"){btns.forEach((b,k)=>b.onclick=()=>{if(done){if(!mock)explore(k);return}if(sel.includes(k)){sel=sel.filter(x=>x!=k);b.classList.remove("sel");b.innerHTML="☐ "+opts[k].o}else if(sel.length<q[3].length){sel.push(k);b.classList.add("sel");b.innerHTML="☑ "+opts[k].o}setReady(sel.length==q[3].length)});
+    grade=()=>{if(done||sel.length!=q[3].length)return;const ok=sel.every(k=>opts[k].ok);
       why=sel.filter(k=>!opts[k].ok&&opts[k].why).map(k=>`“${opts[k].o}”: ${opts[k].why}`).join("<br>");
       if(!mock)btns.forEach((b,k)=>{if(opts[k].ok)b.classList.add("r");else if(sel.includes(k))b.classList.add("w")});finish(ok)}}
   if(t=="order"){const showO=()=>{document.getElementById("ordsel").innerHTML="Your order: "+(sel.length?sel.map((k,n)=>`<b>${n+1}.</b> ${opts[k].o}`).join(" → "):'<span style="color:var(--mute)">tap below</span>');
-      btns.forEach((b,k)=>b.style.opacity=sel.includes(k)?.35:1);document.getElementById("chk").style.display=sel.length==q[2].length&&!done?"block":"none"};
-    btns.forEach((b,k)=>b.onclick=()=>{if(done||sel.includes(k))return;sel.push(k);showO()});
-    document.getElementById("undo").onclick=()=>{if(done)return;sel.pop();showO()};
-    document.getElementById("chk").onclick=()=>{if(done)return;const ok=sel.every((k,n)=>opts[k].j==n);finish(ok);document.getElementById("undo").style.display="none"}}
-  document.getElementById("nx").onclick=()=>{qi++;quiz();document.getElementById("v-quiz").scrollIntoView()};
+      btns.forEach((b,k)=>b.style.opacity=sel.includes(k)?.35:1);if(done&&!mock&&sel.length==q[2].length){const ok=sel.every((k,n)=>opts[k].j==n);document.getElementById("ordsel").innerHTML+=ok?' <b style="color:var(--ok)">✓ right order</b>':' <b style="color:var(--bad)">✗ not yet</b>'}setReady(sel.length==q[2].length)};
+    btns.forEach((b,k)=>b.onclick=()=>{if((done&&mock)||sel.includes(k))return;sel.push(k);showO()});
+    document.getElementById("undo").onclick=()=>{if(done&&mock)return;sel.pop();showO()};
+    grade=()=>{if(done||sel.length!=q[2].length)return;const ok=sel.every((k,n)=>opts[k].j==n);finish(ok);if(mock)document.getElementById("undo").style.display="none"}}
+  document.getElementById("chk").onclick=()=>grade();
+  document.getElementById("nx").onclick=()=>{if(!done){if(!mock)return;grade();if(!done)return}qi++;quiz();document.getElementById("v-quiz").scrollIntoView()};
 }
 function pickHtml(p){
   if(!p)return `<div class="ropt w">✗ Not answered (counts as wrong)</div>`;
@@ -2865,8 +2871,11 @@ document.getElementById("sq").addEventListener("input",doSearch);
 domains();qFilters();qStart();readiness();coverage();
 
 // ---- versioning: bump APP_VER and add a CHANGELOG entry on every release ----
-const APP_VER="1.5.6",APP_DATE="2026-11-12";
+const APP_VER="1.6.2",APP_DATE="2026-11-12";
 const CHANGELOG=[
+["1.6.2","2026-11-12","Practice: single-answer questions give instant feedback; multi-answer, matching and ordering questions get a Check answer button again, so you can change them before checking."],
+["1.6.1","2026-11-12","Practice: no Check button. Feedback appears as soon as your answer is complete, and you can keep trying other options (only the first answer counts). Mock and Final check unchanged: change freely, Next locks it."],
+["1.6.0","2026-11-12","Change your answer before it counts: tapping an option only selects it. Practice grades on Check answer; Mock exam and Final check lock the answer when you press Next."],
 ["1.5.6","2026-11-12","Labs section: removed the 'Not published' row."],
 ["1.5.5","2026-11-12","Exam day: new Labs section with Cisco's official information (performance-based items, labs grouped in the first hour, real IOS, no going back), what Cisco doesn't publish, likely lab topics and tactics. Pacing and Numbers updated to match."],
 ["1.5.4","2026-11-11","What's new now shows only at the bottom of the Overview page."],
