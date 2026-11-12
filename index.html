@@ -1087,7 +1087,7 @@ show event manager policy registered  ·  show event manager history events</pre
 <div class="sec"><h3>Exam facts</h3>
     <table>
       <tr><td>Length</td><td class="n">120 min</td></tr>
-      <tr><td>Questions (not published; third-party estimate)</td><td class="n">~90–110</td></tr>
+      <tr><td>Question types (Cisco)</td><td class="n brk">labs (performance-based) · multiple choice · drag-and-drop</td></tr><tr><td>Lab placement (Cisco)</td><td class="n">first hour; multiple choice in the second</td></tr><tr><td>Questions (not published; third-party estimate)</td><td class="n">~90–110, fewer with more labs</td></tr>
       <tr><td>Pass score (not published; third-party estimate)</td><td class="n">~825/1000</td></tr>
       <tr><td>v1.2 live since (training partners)</td><td class="n">19 Mar 2026</td></tr>
     </table>
@@ -1270,13 +1270,25 @@ show event manager policy registered  ·  show event manager history events</pre
 <section class="view" id="v-day">
   <div class="sec tip"><h3>⏱ Exam-day plan</h3>
     <div class="lsa">
-      <b>Pace</b><span>~100 questions (estimate) in 120 min → about <b>70 s</b> each. Check the clock at question 35 (≤40 min) and 70 (≤85 min).</span>
-      <b>No going back</b><span>Cisco exams normally don't let you return to earlier questions. Decide, then move on.</span>
+      <b>Pace</b><span><b>First hour: labs</b> (Cisco designs each for about 5–7 min). <b>Second hour: multiple choice and drag-and-drop</b>. The total of ~90–110 items is an estimate and drops when you get more labs. In hour two, check that about half the items are done by the 90-minute mark.</span>
+      <b>No going back</b><span>You can skip an item, but you can't return to it. That includes labs. Decide, then move on.</span>
       <b>Read the verb</b><span>Configure/verify → syntax and show output. Interpret → read the config. Describe → roles and planes.</span>
       <b>Eliminate</b><span>Drop answers with a wrong command mode, wrong port/number or wrong plane, then compare what's left.</span>
       <b>Drag & drop</b><span>Place the pairs you're sure of first. The rest usually falls into place.</span>
       <b>Show output</b><span>Read the question first, then scan the output for that one field: State column, flags (*, >, P, s, T), counters, return codes.</span>
       <b>Exhibits</b><span>Trace the packet path hop by hop before reading the options. Check roles at each hop: inside/outside, root/active, area, ingress/egress.</span>
+    </div></div>
+
+  <div class="sec"><h3>🧪 Labs (performance-based items) <span class="src">Cisco Learning Network · Cisco blog · WEB</span></h3>
+    <div class="lsa">
+      <b>Official: yes</b><span>Cisco's ENCOR v1.2 exam page lists the question types as <em>performance-based questions, multiple choice and drag-and-drop</em>.</span>
+      <b>Order</b><span>For 350-401 Cisco groups all lab items at the start: labs in the first hour, multiple choice in the second hour (Cisco Learning Network announcement, late 2024).</span>
+      <b>Screen</b><span>Left: Tasks, Guidelines and Topology tabs. Right: a web terminal tab per device (click a device in the topology to open it; a send-to-all option exists). You can't split the terminal.</span>
+      <b>Real IOS</b><span>Not a simulator: ? and tab completion work, short commands are fine, and <em>any</em> method counts if the end state meets the task.</span>
+      <b>Timing</b><span>Each lab is designed for 5–7 min. There's no per-item timer, only the exam clock.</span>
+      <b>Likely lab topics</b><span>Objectives worded configure / verify / troubleshoot / construct (Cisco's community manager pointed to these verbs): 2.2 VRF, GRE/IPsec · 3.1 trunks, EtherChannel, RSTP/MST + guards · 3.2b OSPFv2/v3 · 3.2c eBGP · 3.3b NAT/PAT · 3.3c HSRP/VRRP · 4.2 Flexible NetFlow · 4.3 SPAN/RSPAN/ERSPAN · 4.4 IP SLA · 4.6 NETCONF/RESTCONF · 5.1 local users, AAA · 5.2 ACLs, CoPP · 6.6 EEM.</span>
+      <b>Lab tactics</b><span>Read every task and the Guidelines (what you must not change) before typing. Check the topology for interface names. Verify each task with show commands before clicking Next, because you can't come back.</span>
+      <b>Practise the UI</b><span>Cisco's official <em>Certification Exam Tutorial</em> videos on the Cisco Learning Network show the lab screen. Practise the configs in a real lab such as Cisco Modeling Labs, the INE labs or Packet Tracer.</span>
     </div></div>
 
   <div class="sec"><h3 style="color:var(--c1)">Architecture: must know</h3><div class="mn">
@@ -2853,8 +2865,10 @@ document.getElementById("sq").addEventListener("input",doSearch);
 domains();qFilters();qStart();readiness();coverage();
 
 // ---- versioning: bump APP_VER and add a CHANGELOG entry on every release ----
-const APP_VER="1.5.4",APP_DATE="2026-11-11";
+const APP_VER="1.5.6",APP_DATE="2026-11-12";
 const CHANGELOG=[
+["1.5.6","2026-11-12","Labs section: removed the 'Not published' row."],
+["1.5.5","2026-11-12","Exam day: new Labs section with Cisco's official information (performance-based items, labs grouped in the first hour, real IOS, no going back), what Cisco doesn't publish, likely lab topics and tactics. Pacing and Numbers updated to match."],
 ["1.5.4","2026-11-11","What's new now shows only at the bottom of the Overview page."],
 ["1.5.3","2026-11-11","Phone layout: compact header, and the quiz mode and domain filter chips sit on single swipeable rows, so the question starts much higher on screen."],
 ["1.5.2","2026-11-11","Desktop: the page no longer shifts sideways when switching between short and long views (space for the scrollbar is always reserved)."],
