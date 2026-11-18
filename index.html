@@ -59,6 +59,9 @@ main{max-width:760px;margin:auto;padding:14px 12px 60px}
 .q{font:700 20px/1.35 'Space Grotesk',system-ui,sans-serif}
 .cli{font:500 13.5px/1.55 "JetBrains Mono",ui-monospace,monospace;background:#0b1020;color:#d6e4ff;border:1px solid var(--line);border-left:3px solid #5b8cff;border-radius:8px;padding:9px 11px;margin:0 0 6px;overflow-wrap:anywhere;text-align:left}
 .cll{text-indent:-2ch;white-space:pre-wrap}
+.cli-in{margin:6px 0 8px;font-size:13px}
+code.ic{font:500 .9em/1.3 "JetBrains Mono",ui-monospace,monospace;background:#0b1020;color:#d6e4ff;border:1px solid var(--line);border-radius:5px;padding:0 4px;overflow-wrap:anywhere;white-space:normal}
+.a code.ic{font-size:.8em}
 .clin{font:400 14px/1.45 Inter,system-ui,sans-serif;color:var(--mute);margin-top:2px}
 .a{font:700 22px/1.3 'Space Grotesk',system-ui,sans-serif;margin-bottom:10px}
 .why{color:#c3cbe0;font-size:14px}
@@ -1633,7 +1636,7 @@ C0.push(
 ["Verify NETCONF","show netconf-yang sessions / show netconf-yang status","Shows SSH sessions and datastore locks.","PCG","4.6"]
 );
 C0.push(
-["Allow only SSH to the VTY lines","line vty 0 4 / transport input ssh / login local (or AAA)","SSH needs hostname, ip domain-name, crypto key generate rsa (2048 recommended), ip ssh version 2.","OCG","5.1"],
+["Allow only SSH to the VTY lines","line vty 0 4 / transport input ssh / login local (or AAA)","SSH needs hostname R1, ip domain-name lab.local, crypto key generate rsa modulus 2048 and ip ssh version 2.","OCG","5.1"],
 ["Strongest way to store a local password","username X algorithm-type scrypt secret … (type 9)","Type 7 (service password-encryption) is reversible. Type 5 = MD5.","OCG","5.1"],
 ["Limit who can SSH to the router","access-class ACL in on line vty","A standard ACL of management hosts.","OCG","5.1"],
 ["Device admin AAA with per-command authorization","TACACS+: TCP 49, encrypts the whole body, separates AuthN/AuthZ/Acct","RADIUS: UDP 1812/1813, encrypts only the password, combines AuthN and AuthZ.","OCG","5.1"],
@@ -2293,7 +2296,7 @@ Q0.push(
 ["R1 has IPv6 addresses and OSPFv3 configured, but it won't forward IPv6 between interfaces. What's missing?",["ipv6 unicast-routing","An IPv4 address on every OSPFv3 link||OSPFv3 runs over link-local IPv6.","A 128-bit OSPFv3 router ID||The router ID is 32-bit.","no ip routing to free the IPv6 table||IPv4 and IPv6 route side by side."],0,"Without ipv6 unicast-routing the router acts as an IPv6 host. OSPFv3 still needs a 32-bit router ID. Set one if no IPv4 address exists. (OCG · PCG)","3.2b"],
 ["Which commands give an HSRP group an IPv6 virtual gateway?",["standby version 2 + standby 1 ipv6 autoconfig","standby 1 ipv6 FE80::1 while staying on version 1||HSRPv1 doesn't support IPv6.","vrrp 1 ipv6 autoconfig under the HSRP group||That mixes VRRP into HSRP.","ipv6 nd ra suppress on both routers||Hosts learn the gateway from RAs."],0,"HSRP for IPv6 needs version 2. Autoconfig builds a virtual link-local address from the virtual MAC, and hosts learn it from router advertisements. (PCG)","3.3c"],
 ["Which command is needed before VRRP can be configured for IPv6 on IOS XE?",["fhrp version vrrp v3","standby version 2||That's HSRP.","ipv6 nd managed-config-flag||That's for stateful DHCPv6.","vrrp 1 preempt||Preemption is already the default."],0,"VRRPv3 (fhrp version vrrp v3) supports IPv4 and IPv6 address families. VRRPv2 is IPv4 only. (PCG · OCG)","3.3c"],
-["An IPv6 ACL ends with an explicit 'deny ipv6 any any log'. Neighbors on that link become unreachable. Why?",["An explicit deny blocks ND (NS/NA) too","IPv6 ACLs can't be applied in the inbound direction||ipv6 traffic-filter works both ways.","The log keyword drops ND packets||log doesn't change the action.","IPv6 ACLs need wildcard masks||They use prefix lengths."],0,"Every IPv6 ACL ends with hidden permit icmp nd-na, permit icmp nd-ns, deny ipv6 any any. An explicit deny comes first and blocks ND. Add the ND permits above it. (PCG)","5.2a"],
+["An IPv6 ACL ends with an explicit 'deny ipv6 any any log'. Neighbors on that link become unreachable. Why?",["An explicit deny blocks ND (NS/NA) too","IPv6 ACLs can't be applied in the inbound direction||ipv6 traffic-filter works both ways.","The log keyword drops ND packets||log doesn't change the action.","IPv6 ACLs need wildcard masks||They use prefix lengths."],0,"Every IPv6 ACL ends with these hidden lines, permit icmp nd-na, permit icmp nd-ns and deny ipv6 any any. An explicit deny comes first and blocks ND. Add the ND permits above it. (PCG)","5.2a"],
 ["Which command applies an IPv6 ACL to an interface?",["ipv6 traffic-filter NAME in","ip access-group NAME in||That's IPv4.","ipv6 access-class NAME in||That's for vty lines.","ipv6 access-list NAME in||That defines the ACL."],0,"Interfaces use ipv6 traffic-filter. Vty lines use ipv6 access-class. (PCG)","5.2a"],
 ["eBGP to 2001:db8:12::2 is Established, but no IPv6 prefixes are exchanged. What's missing?",["activate for the neighbor in the IPv6 AF","network statements under the IPv4 address family||Wrong address family.","a separate BGP process just for IPv6||One process carries all address families.","update-source Loopback0 on both peers||The session is already up."],0,"Only IPv4 unicast is activated by default. IPv6 prefixes need neighbor … activate under address-family ipv6 unicast. (OCG ch11 · PCG)","3.2c"],
 ["Which VRF syntax supports both IPv4 and IPv6?",["vrf definition + address families","ip vrf NAME||IPv4 only.","ipv6 vrf NAME||Not an IOS command.","vrf forwarding under the routing process||That's an interface command."],0,"vrf definition takes address-family ipv4 and ipv6. The old ip vrf is IPv4 only. Interfaces join with vrf forwarding. (PCG)","2.2a"],
@@ -2855,7 +2858,7 @@ Q0.push(
 ["Routes from VRF A should appear in VRF SHARED and vice versa on an MPLS PE. What's configured?",["Matching import/export RTs","Identical route distinguishers||RDs don't control import.","A static route in the global table||That doesn't touch VRF tables.","The same VLAN on both VRFs||Not how leaking works."],0,"VRF SHARED imports A's export RT and A imports SHARED's. RDs only keep prefixes unique. (OCG)","2.2a"],
 ["Hosts in VRF GUEST need a default route to the firewall 192.0.2.1 in the same VRF. Which command?",["ip route vrf GUEST 0.0.0.0 0.0.0.0 192.0.2.1","ip route 0.0.0.0 0.0.0.0 192.0.2.1||That's the global table.","ip default-gateway 192.0.2.1 vrf GUEST||Not a router command.","vrf GUEST ip route 0.0.0.0 0.0.0.0 192.0.2.1||Wrong syntax order."],0,"The vrf keyword places the static route in that VRF's table. (PCG)","2.2a"],
 ["An engineer runs 'ping 10.0.0.50' to a server on the management port of a Catalyst 9300, but it fails. The port is up and addressed. Why?",["The port is in Mgmt-vrf. Use ping vrf","Management ports can't answer pings||They can.","A static default route is missing in the global table||It's in another VRF.","SSH must be enabled first||Not related to ping."],0,"The dedicated management port lives in Mgmt-vrf (Mgmt-intf on routers), so commands need the vrf keyword. (WEB)","2.2a"],
-["DHCP clients in VRF RED get no addresses. The server is reachable only in VRF RED. What's likely missing?",["ip helper-address vrf RED <server>","ip dhcp snooping enabled on the router||That's a switch feature.","A global helper with no VRF||It would look up the global table.","no ip routing on the SVI||That breaks routing."],0,"VRF-aware services need the vrf keyword, or they use the global table. (PCG · WEB)","2.2a"],
+["DHCP clients in VRF RED get no addresses. The server is reachable only in VRF RED. What's likely missing?",["ip helper-address vrf RED &lt;server&gt;","ip dhcp snooping enabled on the router||That's a switch feature.","A global helper with no VRF||It would look up the global table.","no ip routing on the SVI||That breaks routing."],0,"VRF-aware services need the vrf keyword, or they use the global table. (PCG · WEB)","2.2a"],
 ["Which statement about the global routing table is true?",["It's the default VRF","It contains every VRF's routes too||VRF tables are separate.","It disappears when the first VRF is created||It always exists.","It can only hold static routes||Any routing protocol works."],0,"Interfaces without vrf forwarding stay in the global (default) table, shown by show ip route. (OCG)","2.2a"],
 ["Match each VRF command to its job.",["vrf definition RED=>Creates the VRF","vrf forwarding RED=>Moves an interface into it","show ip route vrf RED=>Shows its routing table","ping vrf RED=>Tests reachability inside it"],"match","Remember that vrf forwarding removes the interface's IP, so add it again afterwards. (PCG)","2.2a"],
 // 2.2b
@@ -3210,7 +3213,7 @@ Q0.push(
 ["A video app must stay on the shared tree through the RP. Which command on last-hop routers?",["spt-threshold infinity","ip pim sparse-mode||Enables PIM-SM only.","ip pim rp-address 10.0.0.1||Defines the RP.","ip igmp version 3||Enables source-specific joins."],0,"By default last-hop routers switch to the SPT after the first packet. Infinity keeps the shared tree. (OCG)","3.3d"],
 ["An enterprise wants standards-based dynamic RP discovery without Cisco-only Auto-RP. What does it use?",["BSR","Static RP||Not dynamic.","PIM dense mode||No RP.","MSDP||It shares sources, not RP info."],0,"BSR floods candidate RP information hop by hop in PIMv2. (OCG)","3.3d"],
 ["Two RPs must back each other up with the same RP address. What else is needed?",["MSDP between them (anycast RP)","A unique RP address per router||Anycast RP shares one.","PIM dense mode as fallback||Not part of anycast RP.","HSRP between the RPs||Not how RP redundancy works."],0,"Anycast RP shares one address. MSDP lets each RP learn sources registered at the other. (OCG)","3.3d"],
-["Multicast arrives over a GRE tunnel, but unicast routing toward the source uses the physical interface, so RPF fails. What fixes it without changing unicast routing?",["A static mroute via the tunnel","Disable RPF checking globally||Not supported, and it risks loops.","Use PIM dense mode||RPF still applies.","Increase the TTL on the source||Not related."],0,"ip mroute <source> <mask> Tunnel0 tells PIM to expect that source on the tunnel. (OCG)","3.3d"],
+["Multicast arrives over a GRE tunnel, but unicast routing toward the source uses the physical interface, so RPF fails. What fixes it without changing unicast routing?",["A static mroute via the tunnel","Disable RPF checking globally||Not supported, and it risks loops.","Use PIM dense mode||RPF still applies.","Increase the TTL on the source||Not related."],0,"ip mroute &lt;source&gt; &lt;mask&gt; Tunnel0 tells PIM to expect that source on the tunnel. (OCG)","3.3d"],
 ["Multicast routing is enabled globally, but one router never forms PIM neighbors on Gi0/2. What's missing?",["ip pim sparse-mode on Gi0/2","ip multicast-routing on Gi0/2||That's a global command.","ip igmp snooping on Gi0/2||That's a switch feature.","An RP on Gi0/2||The RP is a router, not an interface setting."],0,"PIM runs only on interfaces where it's enabled. (PCG)","3.3d"],
 ["What do the flags on this entry mean?"+P("(10.1.1.10, 239.5.5.5), 00:02:11/00:03:02, flags: T\n  Incoming interface: Gi0/0, RPF nbr 10.0.12.1\n  Outgoing interface list:\n    Gi0/1, Forward/Sparse, 00:02:11/00:03:02"),["SPT, arriving on Gi0/0","The entry is pruned||That would be P.","Gi0/1 is the RPF interface||Gi0/0 is.","This is a (*,G) shared-tree entry||It's (S,G)."],0,"T means SPT. Gi0/0 is the incoming (RPF) interface, Gi0/1 is in the OIL. (PCG)","3.3d"],
 ["Which two commands are first checks when receivers on a LAN get no multicast? (Choose two.)",["show ip igmp groups","show ip pim neighbor","show ip nat translations||NAT isn't involved.","show standby brief||HSRP isn't involved.","show ip bgp summary||Not for multicast delivery."],[0,1],"Check that receivers joined (IGMP) and PIM adjacencies exist, then mroute state. (PCG)","3.3d"],
@@ -3270,7 +3273,7 @@ C0.push(
 ["NETCONF operations","get, get-config, edit-config, copy-config, delete-config, lock, unlock, commit, close-session","get returns config and state. Get-config only config.","OCG","4.6"],
 ["NETCONF hello","Both sides exchange capabilities (supported models and features) when the session opens","The client learns, for example, whether a candidate datastore exists.","OCG","4.6"],
 ["Encodings: NETCONF vs RESTCONF","NETCONF: XML only. RESTCONF: XML or JSON","Both use YANG models for structure.","OCG","4.6"],
-["RESTCONF URI form","https://<host>/restconf/data/<module>:<container>, e.g. /restconf/data/ietf-interfaces:interfaces","Add the list key, e.g. interface=GigabitEthernet1.","OCG · WEB","4.6"],
+["RESTCONF URI form","https://&lt;host&gt;/restconf/data/&lt;module&gt;:&lt;container&gt;, e.g. /restconf/data/ietf-interfaces:interfaces","Add the list key, e.g. interface=GigabitEthernet1.","OCG · WEB","4.6"],
 ["RESTCONF HTTP methods","GET read, POST create, PUT create or replace, PATCH merge, DELETE remove","PUT replaces the whole target. PATCH changes only what's sent.","OCG","4.6"],
 ["RESTCONF media type header","Accept / Content-Type: application/yang-data+json (or +xml)","Wrong headers give 406 or 415 errors.","OCG","4.6"],
 ["NETCONF protocol layers","Content (YANG data), operations (get, edit-config…), messages (rpc, rpc-reply), transport (SSH)","Mirrors how a NETCONF exchange is built.","OCG","4.6"],
@@ -3430,7 +3433,7 @@ Q0.push(
 // 5.2a
 ["An ACL has lines 10, 20 and 30. A new rule must go between 10 and 20. What's the quickest way?",["Enter '15 permit …' in the ACL","Delete the ACL and retype it||Not needed.","Add the line at the end||Order matters.","Use 'insert after 10' in config mode||Not IOS syntax."],0,"Sequence numbers let you insert lines in place. (PCG)","5.2a"],
 ["An ACL needs room for new lines between 10 and 11. Which command?",["ip access-list resequence …","clear access-list counters||Counters only.","no ip access-list NAME||Deletes it.","ip access-list renumber NAME||Not a command."],0,"Resequencing renumbers lines to 10, 20, 30 and so on. (PCG)","5.2a"],
-["Which ACL line permits return TCP traffic from web servers to inside clients?",["…any eq 443 <inside> established","permit tcp 10.1.1.0 0.0.0.255 any eq 443||That's outbound.","permit ip any any established||established is TCP only.","permit udp any eq 443 any||Wrong protocol."],0,"established matches ACK/RST bits. It isn't stateful like a firewall. (OCG)","5.2a"],
+["Which ACL line permits return TCP traffic from web servers to inside clients?",["…any eq 443 &lt;inside&gt; established","permit tcp 10.1.1.0 0.0.0.255 any eq 443||That's outbound.","permit ip any any established||established is TCP only.","permit udp any eq 443 any||Wrong protocol."],0,"established matches ACK/RST bits. It isn't stateful like a firewall. (OCG)","5.2a"],
 ["Traffic is dropped by an ACL, but no line's counter rises. Why?",["The implicit deny matched it","Counters only work for permits||Deny lines count too.","The ACL is applied outbound||Counters still work.","log is missing on the permit lines||Not needed for counters."],0,"Add 'deny ip any any log' at the end to see what's dropped. (OCG)","5.2a"],
 ["A firewall team wants to write one ACL line covering 20 servers and 5 ports. What helps?",["Object groups","A standard ACL||Can't match ports.","A VACL||Wrong scope.","Reflexive ACL||Different purpose."],0,"object-group network and object-group service keep ACLs short. (PCG · WEB)","5.2a"],
 ["Contractors may reach the lab only on weekdays 8:00–18:00. Which ACL feature fits?",["A time-range","A VACL on the lab VLAN||Not time-based.","An established keyword||Not time-based.","log-input on every line||Logging only."],0,"time-range with periodic statements. The device clock must be correct. (PCG)","5.2a"],
@@ -3476,7 +3479,7 @@ C0.push(
 ["Catalyst Center token lifetime","About 60 minutes. Request a new token when calls return 401","Scripts should refresh automatically.","WEB","5.3"],
 ["HTTP 429","Too Many Requests: the API's rate limit was hit","Back off and retry after the time in the Retry-After header.","WEB","5.3"],
 ["HTTP basic authentication header","Authorization: Basic base64(username:password)","Base64 is encoding, not encryption, so HTTPS is mandatory.","OCG","5.3"],
-["Bearer token header","Authorization: Bearer <token>","Anyone holding the token can use it until it expires.","OCG · WEB","5.3"],
+["Bearer token header","Authorization: Bearer &lt;token&gt;","Anyone holding the token can use it until it expires.","OCG · WEB","5.3"],
 ["OAuth 2.0 roles","Resource owner (user), client (app), authorization server (issues tokens), resource server (API)","The client never sees the user's password.","OCG · WEB","5.3"],
 ["OAuth 2.0 grant types","Authorization code (apps acting for users) and client credentials (machine to machine)","Implicit and password grants are discouraged.","WEB","5.3"],
 ["Refresh tokens","Long-lived tokens used to get new short-lived access tokens without logging in again","Keep them as secret as passwords.","WEB","5.3"],
@@ -3529,7 +3532,7 @@ Q0.push(
 ["A team commits a Python script with the Catalyst Center password to a shared Git repo. What's the better practice?",["Read secrets from a vault or env vars","Base64-encode the password in the script||Encoding isn't protection.","Make the repo private and leave it in||Still exposed to everyone with access.","Rename the variable to something obscure||Security by obscurity."],0,"Keep credentials out of code and rotate any that leaked. (WEB)","5.3"],
 ["A script uses verify=False for HTTPS to devices. Why is this risky?",["A MITM can steal the token","It disables TLS encryption||Traffic is still encrypted.","It forces HTTP/1.0 on all calls||Not related.","It skips RBAC on the server||Server checks still apply."],0,"Without certificate validation, the client can't tell whether it's talking to the real device. (WEB)","5.3"],
 ["A polling script starts getting HTTP 429 responses. What should it do?",["Back off and retry later","Retry immediately in a loop||Makes it worse.","Request a new token||429 isn't an auth error.","Switch from GET to POST||Method isn't the issue."],0,"429 means rate limited. Honor Retry-After and slow down. (WEB)","5.3"],
-["Which header carries HTTP basic credentials?",["Authorization: Basic","X-Auth-Token: Basic …||That header carries Catalyst Center tokens.","Cookie: user=…||Not basic auth.","Accept: Basic <credentials>||Accept is for media types."],0,"The value is base64(username:password), so it must travel over HTTPS. (OCG)","5.3"],
+["Which header carries HTTP basic credentials?",["Authorization: Basic","X-Auth-Token: Basic …||That header carries Catalyst Center tokens.","Cookie: user=…||Not basic auth.","Accept: Basic &lt;credentials&gt;||Accept is for media types."],0,"The value is base64(username:password), so it must travel over HTTPS. (OCG)","5.3"],
 ["A monitoring service must call an API with no user present. Which OAuth 2.0 grant fits?",["Client credentials","Authorization code||Needs a user to consent.","Implicit||Discouraged and user-facing.","Resource owner password||Discouraged. Shares passwords."],0,"Client credentials let a machine authenticate as itself to get a token. (WEB)","5.3"],
 ["In OAuth 2.0, which component issues access tokens?",["Authorization server","Resource server||It accepts tokens.","Client application||It requests tokens.","Resource owner||The user who grants access."],0,"The client presents the token to the resource server (the API). (OCG · WEB)","5.3"],
 ["A JWT's payload is base64url-decoded by an attacker. What does this show?",["JWTs are signed, not encrypted","The signature was broken||Decoding doesn't need the key.","JWTs use weak AES encryption||They don't use AES by default.","The token has expired||Not shown by decoding."],0,"Anyone can read a JWT payload. The signature only proves integrity. (WEB)","5.3"],
@@ -3621,7 +3624,7 @@ C0.push(
 ["Network and client health APIs","GET /dna/intent/api/v1/network-health and /client-health","Same scores as the Assurance dashboards.","WEB","6.4"],
 ["Async tasks in Catalyst Center","A change returns a taskId. Poll GET /dna/intent/api/v1/task/{taskId} until it finishes","Some results give a fileId to download.","OCG · WEB","6.4"],
 ["Paging large results","Use offset and limit query parameters (e.g., ?offset=1&limit=500)","Loop until fewer items than the limit come back.","WEB","6.4"],
-["SD-WAN Manager common endpoints","/dataservice/device (inventory), /dataservice/device/counters, /dataservice/template/…","All under https://<manager>/dataservice.","WEB","6.4"],
+["SD-WAN Manager common endpoints","/dataservice/device (inventory), /dataservice/device/counters, /dataservice/template/…","All under https://&lt;manager&gt;/dataservice.","WEB","6.4"],
 ["SD-WAN Manager session","POST /j_security_check returns a JSESSIONID cookie. End with GET /logout","Reuse the session instead of logging in per call.","WEB","6.4"],
 ["Python SDKs for controllers","dnacentersdk for Catalyst Center. Catalyst SD-WAN Python libraries for Manager","They handle tokens, paging and retries.","WEB","6.4"],
 ["Catalyst Center webhooks","Catalyst Center POSTs an event's JSON to your receiver URL when it fires","Push instead of polling.","OCG · WEB","6.4"],
@@ -3702,7 +3705,7 @@ Q0.push(
 ["Inventory has 3,000 devices, but the API returns 500 per call. How does the script get them all?",["Page with offset/limit","Raise the token lifetime||Not related.","Use POST instead of GET||Not the fix.","Call once and accept 500||Misses devices."],0,"Loop through pages until fewer than the limit come back. (WEB)","6.4"],
 ["Engineers need 'show version' output from 200 devices without SSH to each. Which Catalyst Center API fits?",["Command Runner","Site API||Site hierarchy.","Webhook events||Notifications.","Template API||Pushes config."],0,"Command Runner runs read-only commands through Catalyst Center. Results come via task and file IDs. (WEB)","6.4"],
 ["A ticketing system should get alerts the moment Catalyst Center raises them, without polling. What's used?",["Webhook event notifications","A cron job calling network-health||Polling.","SNMP polling of Catalyst Center||Not how its events work.","Command Runner||Runs show commands."],0,"Catalyst Center POSTs event JSON to the receiver URL. (OCG · WEB)","6.4"],
-["Which SD-WAN Manager endpoint lists devices in the fabric?",["/dataservice/device","/dna/intent/api/v1/network-device||Catalyst Center.","/restconf/data/device||RESTCONF on a device.","/api/v1/devices||Not Manager's path."],0,"Manager APIs sit under https://<manager>/dataservice. (WEB)","6.4"],
+["Which SD-WAN Manager endpoint lists devices in the fabric?",["/dataservice/device","/dna/intent/api/v1/network-device||Catalyst Center.","/restconf/data/device||RESTCONF on a device.","/api/v1/devices||Not Manager's path."],0,"Manager APIs sit under https://&lt;manager&gt;/dataservice. (WEB)","6.4"],
 ["After a batch of SD-WAN Manager calls, what should a well-behaved script do?",["Log out to end the session","Delete the JSESSIONID from Manager||Not possible.","Reboot Manager||No.","Change the admin password||Not needed."],0,"GET /logout ends the session cleanly instead of leaving it open. (WEB)","6.4"],
 ["Which Python package simplifies Catalyst Center API calls?",["dnacentersdk","netmiko (SSH)||SSH CLI.","pyang tree||YANG tooling.","ncclient (830)||NETCONF."],0,"The SDK handles tokens, paging and retries. (WEB)","6.4"],
 ["Where can an engineer see every Catalyst Center API with examples inside the GUI?",["Developer Toolkit","Assurance > Issues||Operational data.","Design > Network Settings||Settings.","Provision > Inventory||Devices."],0,"The Developer Toolkit lists APIs with request/response examples. (WEB)","6.4"],
@@ -3934,15 +3937,53 @@ function cliEsc(s){return s.replace(/<(?!\/?(b|i|code|br|sub|sup)\b)/g,"&lt;").r
 function cliBlock(lines){return `<div class="cli">${lines.map(l=>{const ind=l.match(/^ */)[0].length;return `<div class="cll" style="padding-left:${ind+2}ch">${cliEsc(l.trimStart())}</div>`}).join("")}</div>`}
 function ansHtml(c){
   const f=CMD[c[1]];
-  if(f) return `<div class="a">${cliBlock(f.c)}${f.n?`<div class="clin">${f.n}</div>`:""}</div>`;
+  if(f) return `<div class="a">${cliBlock(f.c)}${f.n?`<div class="clin">${fmtProse(f.n)}</div>`:""}</div>`;
   const t=c[2].replace(/&quot;/g,'"');
   if(CMDRX.test(t)&&!CMDNO.test(t)){
     const m=t.match(/(: | \(|; |, then | then | on the | on every | on interfaces| under the | under line | with | , used as|, used as| used as | instead of | sends | shows | err-disables | for outgoing|, plus )/);
     let cmd=m?t.slice(0,m.index):t,rest=m?t.slice(m.index).replace(/^[:;,]?\s*/,"").replace(/^,\s*/,""):"";
     cmd=cmd.replace(/,\s*$/,"");const lines=cmd.split(/ \+ /).map(s=>s.trim());
-    return `<div class="a">${cliBlock(lines)}${rest?`<div class="clin">${rest}</div>`:""}</div>`;
+    return `<div class="a">${cliBlock(lines)}${rest?`<div class="clin">${fmtProse(rest)}</div>`:""}</div>`;
   }
-  return `<div class="a">${t}</div>`;
+  return `<div class="a">${fmtProse(t)}</div>`;
+}
+// ---- v1.9.4 commands inside running text: inline code, and a code block when a sentence lists 3+ commands ----
+const CMDROOT=["ip","ipv6","switchport","spanning-tree","vrrp","glbp","ntp","logging","snmp-server","aaa","crypto","channel-group","lacp","errdisable","access-list","class-map","policy-map","service-policy","vtp","debug","undebug","redistribute","default-information","auto-cost","maximum-paths","summary-address","aggregate-address","passive-interface","route-map","restconf","netconf-yang","encapsulation","exec-timeout","mka","fhrp","monitor session","event manager","transport input","login local","login block-for","login authentication","login quiet-mode","enable secret","enable algorithm-type","banner motd","banner login","key chain","macsec network-link","vrf definition","vrf forwarding","address-family","no shutdown","no switchport","no ip","no logging","no cdp","no service","clear ip","clear access-list","terminal monitor","service timestamps","service password-encryption","copy running-config","write memory","ping vrf","traceroute vrf","set ip","set dscp","set local-preference","match ip","match protocol","match length","police rate","police cir","shape average","priority percent","bandwidth percent","bandwidth remaining","tunnel source","tunnel destination","tunnel mode","tunnel protection","line vty","line con","line aux","access-class","ip ssh","parser view","control-plane","management-interface","vlan dot1q","privilege exec","set ipv6","dot1x","mls qos","auto qos","archive","event timer","event syslog","event cli","event track","event snmp","event interface","event none"];
+const CMDALT=CMDROOT.sort((a,b)=>b.length-a.length).map(r=>r.replace(/[-+.]/g,"\\$&").replace(/ /g,"\\s+")).join("|")+"|router\\s+(?:ospf|ospfv3|eigrp|bgp|lisp|rip|isis)|standby\\s+(?:\\d+|version|use-bia)|port-channel\\s+(?:load-balance|min-links|standalone-disable)|show\\s+(?:ip|ipv6|interfaces?|running-config|startup-config|version|etherchannel|lacp|spanning-tree|standby|vrrp|glbp|ntp|logging|snmp|aaa|users|ssh|policy-map|route-map|access-lists|flow|monitor|event|platform|crypto|track|cdp|lldp|vlan|mac|arp|processes|clock|ptp|netconf-yang|restconf|bfd|bgp|ospf|eigrp|vtp|archive|run|tech-support|dmvpn|nhrp|sdwan|cts|device-tracking|authentication|dot1x|mka|macsec|errdisable|udld|license|inventory|ipsec|users)|username\\s+(?:[A-Z][\\w-]*|admin)|neighbor\\s+\\S+\\s+(?:remote-as|route-map|prefix-list|default-originate|next-hop-self|activate|ebgp-multihop|update-source)|area\\s+\\S+\\s+(?:stub|nssa|range|virtual-link|filter-list|authentication)|track\\s+\\d+|action\\s+\\d+\\.\\d+|interface\\s+(?:range\\s+)?[A-Z][\\w/.:-]*\\d|vlan\\s+\\d+|hostname\\s+[A-Z][\\w-]*|permit\\s+(?:ip|ipv6|tcp|udp|icmp)|deny\\s+(?:ip|ipv6|tcp|udp|icmp)";
+const CMDRE=new RegExp("(^|[\\s(“'\"])("+CMDALT+")(?=[\\s,.;:)”'\"]|$)","g");
+const CMDHEAD=new RegExp("^("+CMDALT+")(?=[\\s,.;:)”'\"]|$)");
+const CMDSTOP=new Set("the a an on in for to with and or is are be when if under then so because but which that only also it its every each both all from by as at of not can will was does do instead this these those one per your you their there here than into via used needs need gives shows returns sends keeps makes uses lets means gives lists returns keeps applies works runs adds replaces rejects logs encrypts stops fires summarizes removes carries suppresses selects lowers filters enters re-enables takes stays stay goes sits spans joins becomes picks prunes points must may sets attaches tells turns breaks brings allows blocks builds creates defines deletes disables drops enables forces hides limits matches moves overrides prevents protects pushes reads resets saves starts triggers writes listens lands acts counts follows inserts assigns decides changes comes does has should would could command keyword set inbound outbound option nothing everything something database first last again too while after before until unless just still most more less same other another such whose where what who how why".split(" "));
+const CMDTOK=/^(?:[A-Z]|[a-z0-9][a-z0-9\-\/.:*_=+%]*|[A-Z][A-Za-z0-9\-\/.:_]*\d[\w\/.:-]*|[A-Z][A-Z0-9_-]+|&lt;[^&]+&gt;|…|\||\{[^}]*\}|\[[^\]]*\]|"[^"]*"|\$\w+)$/;
+function cmdSpanAt(t,i){ // i = index where a root starts; returns end index of the command
+  const rm=t.slice(i).match(CMDHEAD);
+  if(!rm)return -1;let end=i+rm[1].length,ntok=rm[1].trim().split(/\s+/).length;
+  for(;;){const m=t.slice(end).match(/^(\s+)([^\s]+)/);if(!m)break;let tok=m[2],trail="";const pm=tok.match(/^(.*?)([,.;:)!?”'’]+)$/);if(pm&&!/^&lt;|^\.\.\.|^…$/.test(tok)){tok=pm[1];trail=pm[2]}
+    if(!tok||tok.startsWith("(")||CMDSTOP.has(tok)||!CMDTOK.test(tok))break;end+=m[1].length+tok.length;ntok++;if(trail)break}
+  return ntok>=2?end:-1;
+}
+function cmdInline(t){
+  let out="",i=0;CMDRE.lastIndex=0;let m;
+  while((m=CMDRE.exec(t))){const s=m.index+m[1].length;if(s<i)continue;const e=cmdSpanAt(t,s);if(e<0)continue;
+    let a=s,b=e,q="";if((t[a-1]=="'"&&t[b]=="'")||(t[a-1]=="‘"&&t[b]=="’")){a--;b++;q="q"}
+    out+=t.slice(i,a)+'<code class="ic">'+t.slice(q?a+1:a,q?b-1:b)+"</code>";i=b;CMDRE.lastIndex=b}
+  return out+t.slice(i);
+}
+function isCmdItem(x){x=x.trim().replace(/\s*\([^)]*\)\s*$/,"");if(/^hostname$/.test(x))return true;CMDRE.lastIndex=0;const m=CMDRE.exec(x);if(!m||m.index+m[1].length!==0)return false;return cmdSpanAt(x,0)===x.length}
+function cmdBlocks(t){ // sentence with 3+ commands in a comma list → prose + code block
+  return t.replace(/((?:[^.!?]|\.(?=\S))*?)((?:(?:[^,.!?]|\.(?=\S))+,\s+){2,}(?:and\s+|or\s+)?(?:[^,.!?]|\.(?=\S))+)([.!?](?=\s|$)|$)/g,(all,pre,list,end)=>{
+    const items=list.split(/,\s+(?:and\s+|or\s+)?|\s+and\s+/);let k=0;while(k<items.length&&!isCmdItem(items[k]))k++;
+    if(k>0&&k<items.length){const w=items[k-1].trim().split(/\s+/);for(let j=1;j<w.length;j++){if(isCmdItem(w.slice(j).join(" "))){items.splice(k-1,1,w.slice(0,j).join(" ")+" ",w.slice(j).join(" "));k=k-0;break}}}
+    k=0;while(k<items.length&&!isCmdItem(items[k]))k++;
+    const head=items.slice(0,k).join(", ").replace(/\s+$/,""),cmds=items.slice(k);if(cmds.length<3||!cmds.every(isCmdItem))return all;
+    const lines=cmds.map(x=>{const p=x.trim().match(/^(.*?)\s*\(([^)]*)\)\s*$/);return p?p[1]+"   ! "+p[2]:x.trim()});
+    const lead=(pre+head).trim().replace(/[:,]$/,"");
+    return (lead?lead+":":"")+'<div class="cli cli-in">'+lines.map(l=>`<div class="cll" style="padding-left:2ch">${l}</div>`).join("")+"</div>";});
+}
+function fmtProse(s,block){if(s==null)return s;s=String(s);const prot=[];
+  let t=s.replace(/<pre[\s\S]*?<\/pre>|<code[\s\S]*?<\/code>|<div class="cli[\s\S]*?<\/div><\/div>|<[^>]+>/g,m=>{prot.push(m);return"\u0001"+(prot.length-1)+"\u0002"});
+  if(block)t=cmdBlocks(t);
+  t=t.split(/(<div class="cli cli-in">[\s\S]*?<\/div><\/div>)/).map((p,k)=>k%2?p:cmdInline(p)).join("");
+  return t.replace(/\u0001(\d+)\u0002/g,(m,n)=>prot[+n]);
 }
 
 // v1.8 content targets: 800 cards + 800 questions, split by blueprint weight, then by sub-objective breadth
@@ -4045,7 +4086,7 @@ const C=C0.map(c=>{const r=[DOM(c[4]),c[0],c[1],c[2],c[3],c[4]];r.k=KEYFIX["c"+h
 const Q=Q0.map(q=>{const r=[DOM(q[4]),q[0],q[1],q[2],q[3],q[4]];r.k=KEYFIX["q"+hsh(q[0])]||"q"+hsh(q[0]);return r});
 const OCGCH={"1.1a":"22","1.1b":"22","1.2":"23","1.3":"23","1.4":"14","2.1":"27","2.2a":"6","2.2b":"16","2.3a":"16","2.3b":"16","3.1a":"5","3.1b":"5","3.1c":"2–4","3.2a":"7–8","3.2b":"8–10","3.2c":"11–12","3.2d":"6","3.3a":"15 (PTP: INE)","3.3b":"15","3.3c":"15","3.3d":"13","4.1":"24","4.2":"24","4.3":"24","4.4":"24","4.5":"24","4.6":"28","5.1":"26","5.2a":"26","5.2b":"26","5.3":"28","5.4":"25","6.1":"28","6.2":"28","6.3":"28","6.4":"28","6.5":"28","6.6":"29","6.7":"29"};
 const chap=o=>"OCG ch "+OCGCH[o];
-const ot=o=>String(o).split("||")[0], orsn=o=>String(o).split("||")[1]||"";
+const ot=o=>fmtProse(String(o).split("||")[0]), orsn=o=>fmtProse(String(o).split("||")[1]||"",1);
 // held-out final check: fixed per domain, never shown in Practice / Retry / Weak / Mock
 const FINN={a:5,v:3,i:9,n:3,s:6,u:4};
 Object.keys(FINN).forEach(k=>Q.map((q,i)=>i).filter(i=>Q[i][0]==k).sort((a,b)=>Q[a].k<Q[b].k?-1:1).slice(0,FINN[k]).forEach(i=>Q[i].fin=1));
@@ -4114,8 +4155,8 @@ function render(){
   const dk=cardDiag(c),L=lv(i);
   const dots=[1,2,3,4].map(n=>`<i style="display:inline-block;width:7px;height:7px;border-radius:50%;margin-left:3px;background:${n<=L?d.c:"var(--line)"}"></i>`).join("");
   el.innerHTML=`<div class="card${dk?" big":""}" id="cd"><div class="f">
-   <div class="side front"><div class="lbl" style="color:${d.c}">${d.n} · Requirement${src}<span style="float:right">${dots}</span></div><div class="q">${c[1]}</div><div class="tap">tap to flip ↻</div></div>
-   <div class="side back"><div class="lbl" style="color:${d.c}">Solution${src}</div>${ansHtml(c)}<div class="why">${c[3]}</div>${dk?`<div style="margin-top:12px">${drawDG(dk)}</div>`:""}</div>
+   <div class="side front"><div class="lbl" style="color:${d.c}">${d.n} · Requirement${src}<span style="float:right">${dots}</span></div><div class="q">${fmtProse(c[1])}</div><div class="tap">tap to flip ↻</div></div>
+   <div class="side back"><div class="lbl" style="color:${d.c}">Solution${src}</div>${ansHtml(c)}<div class="why">${fmtProse(c[3],1)}</div>${dk?`<div style="margin-top:12px">${drawDG(dk)}</div>`:""}</div>
   </div></div>
   <div class="btns"><button class="again" id="ag">Again</button><button class="know" id="kn">Got it ✓</button></div>
   <p class="why" style="text-align:center;margin-top:8px">${deck.length} in this session · "Again" returns in 3 cards · "Got it" moves it up a level</p>`;
@@ -4186,14 +4227,14 @@ function quiz(){
   else if(t=="match"){const pairs=q[2].map(o=>o.split("=>")),rights=shuf(pairs.map(p=>p[1]));opts=shuf(pairs.map((p,j)=>({l:p[0],r:p[1],j})));
     body=opts.map((o,k)=>`<div class="mrow"><span>${o.l}</span><select class="msel" data-k="${k}"><option value="">choose…</option>${rights.map(r=>`<option>${r}</option>`).join("")}</select></div>`).join("")}
   else{opts=shuf(q[2].map((o,j)=>({o:ot(o),why:orsn(o),ok:t=="single"?j==q[3]:q[3].includes(j)})));body=opts.map((o,k)=>`<button class="opt" data-k="${k}">${t=="multi"?"☐ ":""}${o.o}</button>`).join("")}
-  box.innerHTML=head+`<div class="scen">${q[1]}</div>${dq}${tag}${body}<button class="next" id="chk">Check answer</button><div id="qx" class="why" style="display:none;background:var(--panel2);border-radius:12px;padding:12px;margin:4px 0 6px"></div><button class="next" id="nx">${mock&&qi==qorder.length-1?"Finish exam":"Next →"}</button>`;
+  box.innerHTML=head+`<div class="scen">${fmtProse(q[1])}</div>${dq}${tag}${body}<button class="next" id="chk">Check answer</button><div id="qx" class="why" style="display:none;background:var(--panel2);border-radius:12px;padding:12px;margin:4px 0 6px"></div><button class="next" id="nx">${mock&&qi==qorder.length-1?"Finish exam":"Next →"}</button>`;
   const btns=[...box.querySelectorAll(".opt")];let done=false,sel=[],why="",grade=()=>{};
   const setReady=r=>{if(done)return;if(mock)document.getElementById("nx").style.display=r?"block":"none";else if(t=="single"){if(r)grade()}else document.getElementById("chk").style.display=r?"block":"none"};
   const explore=k=>{const b=btns[k];b.classList.add(opts[k].ok?"r":"w");if(!opts[k].ok&&opts[k].why){let e=document.getElementById("qx2");
     if(!e){e=document.createElement("div");e.id="qx2";e.style.cssText="margin:6px 0;color:#f3c1c1";document.getElementById("qx").prepend(e)}e.innerHTML=`<b>Also wrong:</b> “${opts[k].o}”: ${opts[k].why}`}};
   const finish=ok=>{done=true;if(mock){mock.ans[id]=ok;(mock.pk=mock.pk||{})[id]={t,opts,sel:sel.slice()};record(id,ok);document.getElementById("nx").style.display="block";const c=document.getElementById("chk");if(c)c.style.display="none";btns.forEach(b=>b.disabled=true);return}
     qn++;if(ok)qr++;record(id,ok);upd();
-    const x=document.getElementById("qx");x.innerHTML=`<b style="color:${ok?"var(--ok)":"var(--bad)"}">${ok?"Correct.":"Not quite."}</b> ${t!="single"?`<div style="margin:6px 0"><b>Answer:</b> ${qanswer(q)}</div>`:""}${why?`<div style="margin:6px 0;color:#f3c1c1"><b>Why not your pick:</b> ${why}</div>`:""}${q[4]}${qd?`<div style="margin-top:10px">${drawDG(qd[1])}</div>`:""}${readHtml(q[5])}`;x.style.display="block";
+    const x=document.getElementById("qx");x.innerHTML=`<b style="color:${ok?"var(--ok)":"var(--bad)"}">${ok?"Correct.":"Not quite."}</b> ${t!="single"?`<div style="margin:6px 0"><b>Answer:</b> ${qanswer(q)}</div>`:""}${why?`<div style="margin:6px 0;color:#f3c1c1"><b>Why not your pick:</b> ${why}</div>`:""}${fmtProse(q[4],1)}${qd?`<div style="margin-top:10px">${drawDG(qd[1])}</div>`:""}${readHtml(q[5])}`;x.style.display="block";
     const c=document.getElementById("chk");if(c)c.style.display="none";document.getElementById("nx").style.display="block"};
   if(t=="single"){btns.forEach((b,k)=>b.onclick=()=>{if(done){if(!mock)explore(k);return}sel=[k];btns.forEach(x=>x.classList.remove("sel"));b.classList.add("sel");setReady(true)});
     grade=()=>{if(done||!sel.length)return;const k=sel[0],ok=opts[k].ok;if(!ok&&opts[k].why)why=`“${opts[k].o}”: ${opts[k].why}`;
@@ -4233,7 +4274,7 @@ function finishMock(box){
    <table class="mx"><tr><th style="text-align:left">Domain</th><th>Right</th><th>Score</th></tr>${rows}</table>
    ${mh.length>1?`<p class="why" style="margin-top:8px">Recent mocks: ${mh.map(m=>m.p+"%").join(" · ")}</p>`:""}
    <h3 style="font:700 15px 'Space Grotesk',system-ui,sans-serif;margin:14px 0 6px">Review your ${wrong.length} misses</h3>
-   ${wrong.map(i=>{const q=Q[i],qd=qDiag(q);return `<div class="sec" style="margin-bottom:8px"><div class="lbl" style="color:${D[q[0]].c}">${D[q[0]].n} · ${q[5]}</div><div style="font-weight:600;margin-bottom:6px">${q[1]}</div>${pickHtml(mock.pk&&mock.pk[i])}<div class="why"><b style="color:var(--ok)">Answer:</b> ${qanswer(q)}<br>${q[4]}</div>${qd?drawDG(qd[1]):""}${readHtml(q[5])}</div>`}).join("")}
+   ${wrong.map(i=>{const q=Q[i],qd=qDiag(q);return `<div class="sec" style="margin-bottom:8px"><div class="lbl" style="color:${D[q[0]].c}">${D[q[0]].n} · ${q[5]}</div><div style="font-weight:600;margin-bottom:6px">${fmtProse(q[1])}</div>${pickHtml(mock.pk&&mock.pk[i])}<div class="why"><b style="color:var(--ok)">Answer:</b> ${qanswer(q)}<br>${fmtProse(q[4],1)}</div>${qd?drawDG(qd[1]):""}${readHtml(q[5])}</div>`}).join("")}
    <button class="reset" id="qrs">${mock.fin?"Back to the final check":"New mock exam"}</button>`;
   document.getElementById("qrs").onclick=()=>qStart();mock=null;qFilters();upd();
 }
@@ -4318,8 +4359,9 @@ document.getElementById("sq").addEventListener("input",doSearch);
 domains();qFilters();qStart();readiness();coverage();
 
 // ---- versioning: bump APP_VER and add a CHANGELOG entry on every release ----
-const APP_VER="1.9.3",APP_DATE="2026-11-18";
+const APP_VER="1.9.4",APP_DATE="2026-11-18";
 const CHANGELOG=[
+["1.9.4","2026-11-18","Commands inside running text are now formatted as code. When a sentence lists three or more commands (for example what SSH needs, or the hidden lines at the end of every IPv6 ACL), they become a code block, one command per line. Single commands in explanations, card notes, card fronts, questions and answer options get inline code styling. The SSH card now uses real syntax (hostname R1, ip domain-name lab.local, crypto key generate rsa modulus 2048). Also fixed: placeholders such as &lt;host&gt;, &lt;token&gt; and &lt;source&gt; in 9 items were invisible and now display."],
 ["1.9.3","2026-11-18","Audit of the v1.9.0–1.9.2 changes: 25 fixes. Diagrams: empty Python set syntax, the OSPF E2 tie-break, the STP max-age label, the totally stubby area label and the VLAN note are corrected. CLI blocks: MACsec now includes the cryptographic algorithm and macsec network-link, EEM mail includes from, the VTY example covers lines 0 15, and four answers that split badly now have proper layouts (EEM CLI actions, debug logging, flow monitors, NTP access-group). Text: one factual fix (no cdp enable per interface instead of no cdp run on untrusted edges) and 14 sentences from the semicolon rewrite are smoothed (capitalized iBGP and requests, lowercase command openings, a list split into fragments)."],
 ["1.9.2","2026-11-17","Style: semicolons removed from all study text (about 750 places in cards, questions, explanations, diagrams and the overview pages). Each one is now a new sentence, or a comma inside brackets. Semicolons stay only where they are real syntax, such as YANG statements and router output in exhibits. Two Python questions now show their code as a proper multi-line exhibit. Saved progress carries over."],
 ["1.9.1","2026-11-17","Card answers that are CLI now render as a monospace config block, one command per line, indented by sub-mode, with a hanging indent when a line wraps on phones. Notes move under the block in normal text. 80 command sequences (LISP, GRE/IPsec, VRFs, MST, AAA servers, ACLs, NTP auth, VRRPv3, MACsec, EEM and more) were laid out by hand. Another 100 single commands are detected automatically. Placeholders like &lt;MR address&gt; now display instead of vanishing."],
