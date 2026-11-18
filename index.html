@@ -1479,7 +1479,7 @@ const OBJ={"1.1a":"Design: 2-tier, 3-tier, fabric, cloud","1.1b":"HA: redundancy
 const DOM=o=>"avinsu"["123456".indexOf(o[0])];
 // cards: [requirement/trigger, solution, why, source, subObjective]
 const C0=[
-["Small campus, one building: fewest layers, still redundant","Two-tier / collapsed core","Distribution and core merged into one redundant pair. Cheaper. Fine until several distribution blocks need a backbone.","OCG","1.1a"],
+["Small campus, one building: fewest layers, still redundant","Two-tier / collapsed core","Distribution and core merged into one redundant pair. It costs less and works well until several distribution blocks need a backbone.","OCG","1.1a"],
 ["Large multi-building campus: isolate failure domains and scale","Three-tier: access, distribution, core","Core = fast backbone between distribution blocks. Distribution = L2/L3 boundary, summarization and policy point.","OCG","1.1a"],
 ["Data center east-west traffic needs predictable, equal hop counts","Leaf-spine (Clos) fabric","Every leaf connects to every spine: any leaf → leaf path is 2 hops, ECMP uses all links, scale by adding spines/leaves.","OCG","1.1a"],
 ["Campus wants segmentation and policy independent of topology","SD-Access fabric (overlay on a routed underlay)","LISP control plane, VXLAN data plane, SGT policy, all automated by Catalyst Center.","INE · OCG","1.1a"],
@@ -1497,7 +1497,7 @@ const C0=[
 ["Device that forwards user traffic in SD-WAN","WAN Edge router – data plane","Builds IPsec tunnels to other edges and probes each path with BFD.","CRAM · INE","1.2"],
 ["What identifies an SD-WAN transport attachment point?","TLOC = system IP + color + encapsulation","Advertised in OMP so edges know which tunnel endpoints exist (e.g. color mpls, biz-internet).","INE","1.2"],
 ["Use cheap broadband/LTE but keep an SLA per application","Transport independence + Application-Aware Routing","BFD measures loss, latency and jitter per tunnel. Policy moves the app to a path that meets its SLA.","OCG","1.2"],
-["Limitation of Catalyst SD-WAN to keep in mind","Depends on controllers and certificates. Overlay overhead. Licensing. Migration effort","If edges lose the controllers, existing tunnels keep forwarding for a while, but no new routes or policy arrive.","OCG","1.2"],
+["Limitation of Catalyst SD-WAN to keep in mind","Depends on controllers and certificates, plus overlay overhead, licensing and migration effort","If edges lose the controllers, existing tunnels keep forwarding for a while, but no new routes or policy arrive.","OCG","1.2"],
 ["SD-Access control plane protocol","LISP: control plane node = Map Server/Resolver + host tracking database","Maps each EID (endpoint IP/MAC) to an RLOC (the edge node's loopback).","OCG · CRAM","1.3"],
 ["SD-Access data plane encapsulation","VXLAN (VXLAN-GPO) carrying the VN ID and the SGT","Edge nodes tunnel frames across the routed underlay. The header keeps the group tag.","CRAM · INE","1.3"],
 ["SD-Access policy plane","Cisco TrustSec: SGTs + SGACLs from ISE","VN = macro-segmentation (a VRF). SGT = micro-segmentation inside a VN.","CRAM","1.3"],
@@ -1685,7 +1685,7 @@ C0.push(
 ["Model vs encoding","YANG defines the structure. XML or JSON carries the data","NETCONF = XML. RESTCONF = XML or JSON.","OCG","6.3"],
 ["Catalyst Center API for scripts and apps","Intent API (northbound REST): /dna/intent/api/v1/…","Also Integration API (ITSM), Multivendor SDK, Events & Notifications.","CRAM","6.4"],
 ["Get the device inventory from Catalyst Center","GET /dna/intent/api/v1/network-device","After getting a token from /dna/system/api/v1/auth/token.","INE","6.4"],
-["SD-WAN Manager API base path and docs","https://&lt;manager&gt;/dataservice/… . Docs at /apidocs","e.g. GET /dataservice/device.","CRAM","6.4"],
+["SD-WAN Manager API base path and docs","https://&lt;manager&gt;/dataservice/… (docs at /apidocs)","e.g. GET /dataservice/device.","CRAM","6.4"],
 ["Northbound vs southbound API","NB: apps ↔ controller (REST). SB: controller ↔ devices (NETCONF, SSH, SNMP)","Catalyst Center and SD-WAN Manager both expose NB REST.","CRAM","6.4"],
 ["Get real-time events out of Catalyst Center","Events & Notifications (webhooks)","Push instead of polling.","CRAM","6.4"],
 ["200 vs 201 vs 204","200 OK (data returned), 201 Created (after POST), 204 No Content (success, empty body)","2xx = success.","OCG","6.5"],
@@ -1813,7 +1813,7 @@ Q0.push(
 ["The PBR next hop failed and the matching traffic is blackholed. Best fix?",["set ip next-hop verify-availability with a track object","Raise the AD","Add a deny ACL","Apply PBR outbound"],0,"Tracking lets PBR skip a dead next hop. (OCG)","3.2d"],
 ["'show ntp associations' shows <code>*~10.1.1.1 .GPS. 1</code> and <code>+~10.2.2.2 … 2</code>. What is 10.1.1.1?",["The synchronized system peer (stratum 1)","A candidate","Unreachable","A symmetric peer"],0,"* = sys.peer, + = candidate. (OCG)","3.3a"],
 ["R1 syncs to a stratum 3 server. What is R1's stratum?",["4","3","2","16"],0,"One more than its source. (OCG)","3.3a"],
-["Which command makes R1 serve time as stratum 5 without an external source?",["ntp master 5","ntp server 5","ntp peer 5","clock set stratum 5"],0,"ntp master makes the router an authoritative source using its own clock. ntp server makes it a client. (OCG)","3.3a"],
+["Which command makes R1 serve time as stratum 5 without an external source?",["ntp master 5","ntp server 5","ntp peer 5","clock set stratum 5"],0,"ntp master makes the router an authoritative source using its own clock. The ntp server command makes it a client. (OCG)","3.3a"],
 ["Which PTP clock forwards PTP messages and adds its residence time to the correctionField?",["Transparent clock","Boundary clock","Grandmaster","Ordinary clock"],0,"A boundary clock terminates and regenerates PTP instead. (INE)","3.3a"],
 ["'show ptp parent' shows a Parent Clock Identity different from the Grandmaster Clock Identity. Meaning?",["The device syncs through an intermediate (boundary) clock, not directly from the GM","PTP is down","The device is the GM","Two PTP domains collided"],0,"Parent = the clock it syncs from directly. GM = the root of the tree. Different IDs = a boundary clock sits in between. A transparent clock only corrects the delay and never becomes the parent. (INE)","3.3a"],
 ["PC 10.1.1.10 shows up on the Internet as 203.0.113.5. What is 203.0.113.5?",["Inside global","Inside local","Outside local","Outside global"],0,"Inside = our host. Global = as seen from outside. (OCG)","3.3b"],
@@ -1896,7 +1896,7 @@ Q0.push(
 ["Which product offers retrospective file analysis and can quarantine malware on hosts?",["Secure Endpoint (AMP)","Umbrella","Secure Network Analytics","CoPP"],0,"It keeps tracking files after they arrive. (OCG)","5.4"],
 ["Which central policy server assigns SGTs dynamically after authentication?",["ISE","Firepower Management Center","Catalyst Center","Talos"],0,"ISE pushes the SGT with the authorization result. (CRAM)","5.4"],
 ["Code: <code>devices = [{'name':'R1','ip':'10.0.0.1'},{'name':'R2','ip':'10.0.0.2'}]</code> then <code>print(devices[1]['ip'])</code>. Output?",["10.0.0.2","10.0.0.1","R2","KeyError"],0,"Index 1 = the second item. Then the 'ip' key. (OCG)","6.1"],
-["Which function turns a JSON string into a Python dict?",["json.loads()","json.dumps()","json.dump()","str()"],0,"loads = load string. dumps = dump to string. (OCG)","6.1"],
+["Which function turns a JSON string into a Python dict?",["json.loads()","json.dumps()","json.dump()","str()"],0,"loads reads from a string and dumps writes to a string. (OCG)","6.1"],
 ["With the same list, what does <code>for d in devices: print(d['name'])</code> print?",["R1 then R2","Only R1","The whole list","An error"],0,"The loop visits each dict in order. (OCG)","6.1"],
 ["After <code>resp = requests.get(url, headers=h)</code>, which check confirms success?",["resp.status_code == 200","resp.ok == 404","resp.text == 200","resp.json() == True"],0,"status_code holds the HTTP code. (OCG)","6.1"],
 ["Which is valid JSON?",["{&quot;vlan&quot;: 10, &quot;name&quot;: &quot;users&quot;}","{'vlan': 10}","{vlan: 10}","{&quot;vlan&quot;: 10,}"],0,"Double-quoted keys and strings, no trailing comma. (OCG)","6.2"],
@@ -1996,7 +1996,7 @@ Q0.push(
 ["Which two YANG node types hold data values? (Choose two)",["leaf","leaf-list","container||Groups nodes, no value.","grouping||A reusable set of definitions."],[0,1],"container and list structure the tree. Leaf and leaf-list hold values. (OCG)","6.3"],
 // topic depth
 ["OSPFv3 on IOS XE: how do you summarize IPv6 routes from area 1 on the ABR?",["Under 'router ospfv3 1 / address-family ipv6 unicast': area 1 range 2001:db8:1::/48","ipv6 summary-address ospf on the area 1 interface||Not an IOS command.","area 1 range under 'router ospf 1'||The OSPFv2 process doesn't carry IPv6.","summary-prefix on the ABR||That's for external routes on an ASBR."],0,"Same idea as v2 (area range on the ABR), inside the IPv6 address family. (OCG ch10)","3.2b"],
-["Which statement compares eBGP and iBGP neighbors correctly?",["eBGP: TTL 1, AD 20, next hop changed. IBGP: AD 200, next hop unchanged","eBGP needs a full mesh. IBGP doesn't||The reverse: iBGP needs full mesh or RRs.","Both use AD 20||iBGP routes have AD 200.","iBGP peers must be directly connected||iBGP usually peers between loopbacks."],0,"iBGP doesn't re-advertise iBGP routes (split horizon) → full mesh or route reflectors. (OCG ch11–12)","3.2c"],
+["Which statement compares eBGP and iBGP neighbors correctly?",["eBGP: TTL 1, AD 20, next hop changed. iBGP: AD 200, next hop unchanged","eBGP needs a full mesh. IBGP doesn't||The reverse: iBGP needs full mesh or RRs.","Both use AD 20||iBGP routes have AD 200.","iBGP peers must be directly connected||iBGP usually peers between loopbacks."],0,"iBGP doesn't re-advertise iBGP routes (split horizon) → full mesh or route reflectors. (OCG ch11–12)","3.2c"],
 ["Two routers share the receivers' LAN. Which one sends the PIM joins upstream?",["The PIM DR: highest DR priority, then highest IP","The router with the lowest IP||That's the IGMPv2 querier.","Both routers, the RP picks one||Only the DR sends joins.","The PIM forwarder chosen by Assert||Assert picks the forwarder only when duplicates appear."],0,"On the source LAN the DR registers to the RP. On the receiver LAN the DR joins. (OCG ch13)","3.3d"],
 ["Which router is the IGMP querier on a LAN with two IGMPv2 routers?",["The one with the lowest IP address","The one with the highest IP||That's the PIM DR tiebreak.","The PIM DR, always||The querier and the DR can differ.","The one closer to the RP||Not a factor."],0,"IGMPv2/v3 querier = lowest IP. The DR = highest priority/IP. (OCG ch13)","3.3d"]
 );
@@ -2175,7 +2175,7 @@ const QFIX2={
 "Exhibit: SW1 logs a CDP":["Untagged frames land in different VLANs on each side","The trunk goes err-disabled on both switches||Not by default.","All tagged VLAN traffic stops crossing the trunk||Only untagged frames are affected.","DTP shuts the trunk down until it's fixed||The trunk stays up."],
 "Exhibit: The eBGP session":["update-source Loopback0 on both routers","A static route for the prefix to Null0||Only for network advertisement.","next-hop-self toward the eBGP neighbor||An iBGP option.","A second network statement for the loopback||Doesn't affect the TCP session."],
 "OSPFv3 on IOS XE":["area 1 range 2001:db8:1::/48 in the ospfv3 IPv6 AF","ipv6 summary-address ospf on the area 1 interface||Not an IOS command.","area 1 range under the IPv4 'router ospf 1'||The OSPFv2 process doesn't carry IPv6.","summary-prefix 2001:db8:1::/48 on the ABR||That's for external routes on an ASBR."],
-"Which statement compares eBGP and iBGP":["eBGP: TTL 1, AD 20. IBGP: AD 200, next hop kept","eBGP needs a full mesh, but iBGP never does||The reverse: iBGP needs full mesh or RRs.","Both eBGP and iBGP routes use AD 20||iBGP routes have AD 200.","iBGP peers must always be directly connected||iBGP usually peers between loopbacks."],
+"Which statement compares eBGP and iBGP":["eBGP: TTL 1, AD 20. iBGP: AD 200, next hop kept","eBGP needs a full mesh, but iBGP never does||The reverse: iBGP needs full mesh or RRs.","Both eBGP and iBGP routes use AD 20||iBGP routes have AD 200.","iBGP peers must always be directly connected||iBGP usually peers between loopbacks."],
 "Two routers share the receivers' LAN":["The PIM DR: highest priority, then highest IP","The router with the lowest IP on the LAN||That's the IGMPv2 querier.","Both routers. The RP chooses which to use||Only the DR sends joins.","The forwarder chosen by the PIM Assert||Assert picks the forwarder only when duplicates appear."],
 "Which router is the IGMP querier":["The one with the lowest IP address","The one with the highest IP address||That's the PIM DR tiebreak.","Always the router elected PIM DR||The querier and the DR can differ.","The one with the best path to the RP||Not a factor."]
 };
@@ -2422,7 +2422,7 @@ const QF3={
 "Which component lets VMs on the same host talk":{w:["","It shares CPU time. It doesn't forward frames.","A vNIC needs a vSwitch to reach anything.","It never sees VM-to-VM traffic on one host."]},
 "Which statement about VMs and containers":{t:{0:"VMs have own OS. Containers share the host kernel"}},
 "R1: <code>interface g0/1 / ip address":{t:{0:"The IP address is removed. Enter it again"}},
-"'show ip route vrf RED' has 10.1.1.0/24":{t:{0:"It used the global table. ping vrf RED"}},
+"'show ip route vrf RED' has 10.1.1.0/24":{t:{0:"It used the global table. Use ping vrf RED"}},
 "What does VRF-lite require":{t:{0:"Per-VRF config and per-VRF links on each hop"}},
 "Which benefit do VRFs give":{t:{0:"Overlapping IPs and isolated paths on one box"},e:"Each VRF is its own routing and forwarding table, so the same prefix can exist in two VRFs without conflict. (OCG)"},
 "A GRE tunnel keeps going up and down":{t:{0:"Keep the tunnel destination off the tunnel's routes"}},
@@ -2579,7 +2579,7 @@ const QF3={
 "Exhibit: SW1 logs a CDP":{t:{0:"Native VLANs leak, so PVST+ blocks them",2:"All tagged VLAN traffic stops crossing the trunk||Only the two native VLANs (1 and 99) are affected."}},
 "Which two must match for two OSPF routers":{e:"Area, hello/dead timers, subnet, authentication and stub flags must match. Router IDs must differ. (OCG)"},
 "OSPFv3 on IOS XE: how do you summarize":{t:{0:"area 1 range 2001:db8:1::/48 in the IPv6 AF"}},
-"Which statement compares eBGP and iBGP":{t:{0:"eBGP: TTL 1, AD 20. IBGP: AD 200"}},
+"Which statement compares eBGP and iBGP":{t:{0:"eBGP: TTL 1, AD 20. iBGP: AD 200"}},
 "Two routers share the receivers' LAN":{t:{0:"The PIM DR (highest priority, then IP)"}},
 "Exhibit: R1 and R2 stay in EXSTART":{t:{0:"MTU mismatch on the link"}},
 "Exhibit: R1's Gi0/1 is in VRF":{t:{0:"ping uses the global table. Add vrf CUST-A",1:"VRF-lite needs MPLS labels to forward any traffic"}},
@@ -3097,7 +3097,7 @@ Q0.push(
 ["A PBR next hop should be used only while an IP SLA probe to it succeeds. Which command?",["verify-availability with track 1","set ip next-hop 192.0.2.1 track||Not the syntax.","set ip default next-hop 192.0.2.1 instead||No tracking.","track 1 interface Gi0/1 line-protocol only||It needs to be tied to PBR."],0,"verify-availability with a track object falls back when the probe fails. (PCG)","3.2d"],
 ["PBR sends traffic from 10.1.1.0/24 out ISP-B, but return traffic comes back via ISP-A. Why?",["PBR doesn't change advertisements","PBR was applied outbound||It's only inbound.","ISP-B ignores the PBR policy||PBR is local.","The route-map needs a deny entry||Not the cause."],0,"Return traffic follows the routing others learned. Adjust advertisements or NAT to get symmetry. (OCG)","3.2d"],
 ["IPv6 traffic from a lab subnet must use a separate next hop. Which interface command applies the policy?",["ipv6 policy route-map NAME","ip policy route-map NAME||That's IPv4.","ipv6 traffic-filter NAME in||That's an ACL filter.","ipv6 route-map NAME in||Not a command."],0,"IPv6 PBR matches an IPv6 ACL and uses set ipv6 next-hop. (PCG)","3.2d"],
-["Which two commands help verify PBR? (Choose two.)",["show route-map","show ip policy","show ip ospf database||Not PBR.","show ip bgp summary||Not PBR.","show standby brief||HSRP."],[0,1],"show route-map gives match counters. show ip policy shows where policies are applied. (PCG)","3.2d"],
+["Which two commands help verify PBR? (Choose two.)",["show route-map","show ip policy","show ip ospf database||Not PBR.","show ip bgp summary||Not PBR.","show standby brief||HSRP."],[0,1],"show route-map gives match counters, and show ip policy shows where policies are applied. (PCG)","3.2d"],
 ["Put the PBR configuration steps in order.",["Create an ACL for the traffic","Create a route-map that matches the ACL","Add a set action (next hop or interface)","Apply ip policy route-map on the ingress interface"],"order","Unmatched traffic is routed normally. (PCG)","3.2d"]
 );
 
@@ -3155,7 +3155,7 @@ C0.push(
 ["IGMP snooping","The switch listens to IGMP reports and forwards a group only to ports with receivers and to mrouter ports","On by default on Catalyst switches.","OCG","3.3d"],
 ["PIM dense mode","Floods traffic everywhere, then prunes branches without receivers (re-flooding every 3 min)","Suits only densely populated groups. Rarely used.","OCG","3.3d"],
 ["PIM-SM register process","The source's first-hop DR unicasts Register messages to the RP. The RP joins the source and sends Register-Stop","After that, traffic flows natively from source to RP.","OCG","3.3d"],
-["SPT switchover","The last-hop router joins the source tree after the first packet by default. ip pim spt-threshold infinity keeps the shared tree","Shortest path cuts latency and load on the RP.","OCG","3.3d"],
+["SPT switchover","The last-hop router joins the source tree after the first packet by default. The command ip pim spt-threshold infinity keeps the shared tree","Shortest path cuts latency and load on the RP.","OCG","3.3d"],
 ["Static RP","ip pim rp-address 10.0.0.1 on every PIM router","Simple, but changing the RP means touching every router.","PCG","3.3d"],
 ["Auto-RP","Cisco: candidate RPs announce to 224.0.1.39, the mapping agent advertises on 224.0.1.40","Needs sparse-dense mode or autorp listener.","OCG","3.3d"],
 ["Bootstrap router (BSR)","Standard dynamic RP discovery: candidate RPs report to the elected BSR, which floods the RP set hop by hop","Part of PIMv2.","OCG","3.3d"],
@@ -3236,7 +3236,7 @@ C0.push(
 // 4.2
 ["Traditional NetFlow key fields","Source/destination IP, source/destination port, protocol, ToS and input interface","Packets sharing all seven belong to one flow.","OCG","4.2"],
 ["NetFlow export versions","v5: fixed format, IPv4 only. v9: template-based, flexible. IPFIX (v10): IETF standard based on v9","Flexible NetFlow exports v9 or IPFIX.","OCG","4.2"],
-["Apply a flow monitor","ip flow monitor M input (or output) on the interface. ipv6 flow monitor for IPv6","Direction matters: input sees traffic entering the interface.","PCG","4.2"],
+["Apply a flow monitor","ip flow monitor M input (or output) on the interface, and ipv6 flow monitor for IPv6","Direction matters: input sees traffic entering the interface.","PCG","4.2"],
 ["Flow exporter settings","destination 10.1.1.50 / source Loopback0 / transport udp 2055 / export-protocol netflow-v9","The collector must listen on the same UDP port.","PCG","4.2"],
 ["Flow cache timeouts","Active timeout (long flows exported periodically, default 30 min) and inactive timeout (idle flows, default 15 s)","Lower the active timeout for near-real-time graphs.","WEB","4.2"],
 ["Non-key (collect) fields","collect counter bytes long, collect counter packets long, collect timestamp sys-uptime first/last","They add data to a flow without splitting it into new flows.","PCG","4.2"],
@@ -3275,7 +3275,7 @@ C0.push(
 ["RESTCONF media type header","Accept / Content-Type: application/yang-data+json (or +xml)","Wrong headers give 406 or 415 errors.","OCG","4.6"],
 ["NETCONF protocol layers","Content (YANG data), operations (get, edit-config…), messages (rpc, rpc-reply), transport (SSH)","Mirrors how a NETCONF exchange is built.","OCG","4.6"],
 ["Model-driven telemetry","The device streams YANG data: dial-in (collector subscribes) or dial-out (device connects to the collector), often over gRPC","Push-based, unlike SNMP polling.","OCG · WEB","4.6"],
-["Python NETCONF client","ncclient: manager.connect(host, port=830, username, password) then get_config or edit_config","Requests (HTTP) is the usual library for RESTCONF.","OCG","4.6"]
+["Python NETCONF client","ncclient: manager.connect(host, port=830, username, password) then get_config or edit_config","The requests library (HTTP) is the usual choice for RESTCONF.","OCG","4.6"]
 );
 Q0.push(
 // 4.1
@@ -3327,7 +3327,7 @@ C0.push(
 ["Password hash types on IOS XE","Type 7: reversible. Type 5: MD5. Type 8: PBKDF2-SHA-256. Type 9: scrypt (strongest)","Use enable algorithm-type scrypt secret … and the same for usernames.","PCG · OCG","5.1"],
 ["service password-encryption","Turns clear-text passwords into type 7, which only hides them from casual viewing","Type 7 can be reversed instantly. Use secrets instead.","OCG","5.1"],
 ["Console line basics","line con 0 / login local / exec-timeout 5 0","exec-timeout 0 0 means never time out, which is a risk on unattended consoles.","PCG","5.1"],
-["Slow down login guessing","login block-for 120 attempts 3 within 60","Blocks logins for 120 s after 3 failures in 60 s. Login quiet-mode access-class can exempt admins.","PCG","5.1"],
+["Slow down login guessing","login block-for 120 attempts 3 within 60","Blocks logins for 120 s after 3 failures in 60 s. The login quiet-mode access-class command can exempt admins.","PCG","5.1"],
 ["Enforce password length","security passwords min-length 10","Applies to new passwords and secrets.","PCG","5.1"],
 ["SSH version and key size","ip ssh version 2 with an RSA key of at least 2048 bits (crypto key generate rsa modulus 2048)","SSHv1 has known weaknesses.","PCG","5.1"],
 ["SSH session limits","ip ssh time-out 60 / ip ssh authentication-retries 3","Shortens the window for half-open login attempts.","PCG","5.1"],
@@ -3344,7 +3344,7 @@ C0.push(
 ["AAA for enable mode","aaa authentication enable default group tacacs+ enable","Falls back to the enable secret if TACACS+ doesn't answer.","PCG","5.1"],
 ["Apply a named login method list","login authentication VTY-LIST under line vty 0 15","Lines without it use the default list.","PCG","5.1"],
 ["Legal warning at login","banner login (or motd) with a clear unauthorized-access notice","Supports legal action. Don't reveal device details.","PCG","5.1"],
-["Disable unneeded management services","no ip http server (keep secure-server only if needed), no service pad, no cdp run on untrusted edges","Fewer listening services means less attack surface.","WEB","5.1"],
+["Disable unneeded management services","no ip http server (keep secure-server only if needed), no service pad, and no cdp enable on untrusted edge interfaces","Fewer listening services means less attack surface.","WEB","5.1"],
 ["See who's logged in","show users (all lines) and show ssh (SSH sessions with versions and ciphers)","clear line N disconnects a session.","PCG","5.1"],
 ["Role-based CLI views","parser view NAME / commands exec include show … gives an exact command set","Finer than privilege levels. Needs aaa new-model.","PCG · WEB","5.1"],
 ["login local vs AAA","login local on a line checks the local database only. With aaa new-model, method lists control lines","Once aaa new-model is on, the default list applies to all lines.","OCG","5.1"],
@@ -3361,7 +3361,7 @@ C0.push(
 ["Port operators in extended ACLs","eq, neq, lt, gt and range (e.g., range 20 21)","Ports are matched only for TCP or UDP.","OCG","5.2a"],
 ["established keyword","Matches TCP segments with ACK or RST set, i.e. return traffic of existing sessions","It's not stateful. A crafted ACK passes.","OCG","5.2a"],
 ["log vs log-input","log records matches (rate-limited). Log-input also records the input interface and source MAC","Logging can raise CPU. Use on selected lines.","PCG","5.2a"],
-["ACL hit counters","show access-lists shows matches per line. clear access-list counters resets them","Useful to confirm which line traffic hits.","PCG","5.2a"],
+["ACL hit counters","show access-lists shows matches per line, and clear access-list counters resets them","Useful to confirm which line traffic hits.","PCG","5.2a"],
 ["Object groups","object-group network SERVERS / object-group service WEB, then permit object-group WEB any object-group SERVERS","Shorter, easier ACLs for large rule sets.","PCG · WEB","5.2a"],
 ["Time-based ACL","time-range WORK / periodic weekdays 8:00 to 18:00, then … time-range WORK on an ACL line","The device clock (NTP) must be right.","PCG","5.2a"],
 ["Port ACL (PACL)","An IP or MAC ACL on a Layer 2 switch port, inbound","Filters traffic from that port only.","OCG","5.2a"],
@@ -3425,7 +3425,7 @@ Q0.push(
 ["A helpdesk group must see only a few show commands. Privilege levels are too coarse. What's the alternative?",["Role-based CLI views","SNMP views||For SNMP, not CLI.","An access-class on VTY||Limits who connects.","Enable secret level 15||Full access."],0,"parser view lists exactly which commands a role may run. (PCG · WEB)","5.1"],
 ["R1 gets 'aaa new-model' and 'aaa authentication login default local'. The console and VTY lines still have 'password cisco' / 'login'. How do logins work now?",["Both use the local user database","Both keep using the line password||AAA method lists replace line passwords.","Only VTY uses the local database||The default list covers the console too.","Logins are refused until TACACS+ exists||local is a valid method."],0,"With AAA on, lines follow the default method list (or a named one). Line passwords are ignored. Without any default list, IOS checks local users on VTY but the console may need no login at all, which is why the default list should be set. (OCG · WEB)","5.1"],
 ["Match each hash type to its algorithm.",["Type 7=>Reversible Vigenère","Type 5=>MD5","Type 8=>PBKDF2-SHA-256","Type 9=>scrypt"],"match","Type 8 and 9 are the recommended choices. (PCG · OCG)","5.1"],
-["Which command shows active SSH sessions with their version and cipher?",["show ssh","show users||Lists lines, not ciphers.","show ip ssh||Server settings, not sessions.","show crypto key mypubkey rsa||Keys only."],0,"show ip ssh shows the configuration. show ssh shows live sessions. (PCG)","5.1"],
+["Which command shows active SSH sessions with their version and cipher?",["show ssh","show users||Lists lines, not ciphers.","show ip ssh||Server settings, not sessions.","show crypto key mypubkey rsa||Keys only."],0,"show ip ssh shows the configuration, while show ssh shows live sessions. (PCG)","5.1"],
 ["Put the TACACS+ setup in order.",["aaa new-model","Define the server and key","Group it with aaa group server tacacs+","Apply a method list using that group"],"order","Keep local as a fallback method in case the server is down. (PCG)","5.1"],
 // 5.2a
 ["An ACL has lines 10, 20 and 30. A new rule must go between 10 and 20. What's the quickest way?",["Enter '15 permit …' in the ACL","Delete the ACL and retype it||Not needed.","Add the line at the end||Order matters.","Use 'insert after 10' in config mode||Not IOS syntax."],0,"Sequence numbers let you insert lines in place. (PCG)","5.2a"],
@@ -3738,7 +3738,7 @@ Q0.push(
 ["In Chef, what groups recipes for distribution?",["Cookbooks","Playbooks||Ansible.","Manifests||Puppet.","Modules||Generic."],0,"Recipes in cookbooks are stored on the Chef server and applied by chef-client. (OCG)","6.7"],
 ["Which tool keeps a state file and runs 'plan' before 'apply'?",["Terraform","Ansible core||No state file by default.","Chef Infra||Different workflow.","EEM applets||On-box automation."],0,"Terraform compares desired config with its state to plan changes. (WEB)","6.7"],
 ["Which statement describes declarative automation?",["You describe the end state","You list each step to run||That's imperative.","It only works with agents||Not true.","It requires Python scripts||Not true."],0,"The tool works out the changes needed to reach the declared state. (OCG)","6.7"],
-["SaltStack can work in two ways. Which pair is correct?",["Minions or salt-ssh","Only agentless over SSH||Minions are agents.","Only agents with no SSH option||salt-ssh exists.","Only through Catalyst Center||Not related."],0,"Salt masters talk to minions over ZeroMQ. salt-ssh needs no agent. (OCG)","6.7"],
+["SaltStack can work in two ways. Which pair is correct?",["Minions or salt-ssh","Only agentless over SSH||Minions are agents.","Only agents with no SSH option||salt-ssh exists.","Only through Catalyst Center||Not related."],0,"Salt masters talk to minions over ZeroMQ, and salt-ssh needs no agent. (OCG)","6.7"],
 ["A playbook renders configs for 100 switches from one file with {{ hostname }} placeholders. What technology is that?",["Jinja2 templating","YANG models||Data modeling.","Tcl policies||EEM scripting.","SNMP MIBs||Monitoring."],0,"Ansible uses Jinja2 to fill variables into templates. (OCG)","6.7"],
 ["Match each automation tool to a defining trait.",["Ansible=>YAML playbooks over SSH","Puppet=>Catalog pulled on TCP 8140","Chef=>Recipes in cookbooks","Terraform=>State file, plan then apply"],"match","Push needs reachability from the controller. Pull needs an agent on each node. (OCG · WEB)","6.7"]
 );
@@ -3782,9 +3782,9 @@ lacp16:{h:160,n:[["s1",70,60,"SW1 (sys-prio 100)"],["s2",290,60,"SW2"]],l:[["s1"
 stpcost:{h:186,n:[["root",180,25,"Root"],["s2",55,105,"SW2"],["s3",305,105,"SW3"]],l:[["root","s2","b","10G cost 2"],["root","s3","s","1G cost 4"],["s3","s2","s","1G cost 4"]],t:[[180,150,"SW2: direct 2 vs via SW3 4 + 4 = 8 → direct is root port","g"],[180,166,"tie: upstream BID → port priority → port number","m"],[180,180,"long method: 1G 20,000 · 10G 2,000 · 100G 200","m"]]},
 rstplink:{h:170,n:[["s1",80,30,"Switch A"],["s2",280,30,"Switch B"],["hub",80,110,"Hub (shared)"],["pc",280,110,"PC (edge)"]],l:[["s1","s2","b","point-to-point"],["s1","hub","d","shared"],["s2","pc","g","edge / PortFast"]],t:[[180,150,"proposal/agreement only on point-to-point links","t"],[180,164,"edge ports don't trigger topology changes","g"]]},
 loopg:{h:170,n:[["d",180,25,"Designated (upstream)"],["a",180,105,"Alternate port"]],l:[["d","a","x","BPDUs stop (one fiber dead)"]],t:[[180,145,"no guard: max age → forwards → loop","r"],[180,161,"Loop Guard: loop-inconsistent · UDLD: err-disable","g"]]},
-ospfstub:{h:196,z:[[5,30,100,70,"Area 0","b"],[130,10,225,40,"Stub: no type 5, default instead","t"],[130,60,225,40,"Totally stubby: default only","t"],[130,110,225,40,"NSSA: local ASBR → type 7","o"]],n:[["abr",55,65,"ABR"]],t:[[240,170,"ABR translates type 7 → type 5 for area 0","o"],[240,186,"area 0 can never be stub","m"]]},
+ospfstub:{h:196,z:[[5,30,100,70,"Area 0","b"],[130,10,225,40,"Stub: no type 5, default instead","t"],[130,60,225,40,"Totally stubby: no type 3 or 5, default","t"],[130,110,225,40,"NSSA: local ASBR → type 7","o"]],n:[["abr",55,65,"ABR"]],t:[[240,170,"ABR translates type 7 → type 5 for area 0","o"],[240,186,"area 0 can never be stub","m"]]},
 vlink:{h:150,z:[[5,25,105,60,"Area 2","o"],[127,25,105,60,"Area 1 (transit)","t"],[250,25,105,60,"Area 0","b"]],n:[["a",115,55,"ABR1"],["b",242,55,"ABR2"]],l:[["a","b","p","virtual link"]],t:[[180,115,"area 1 virtual-link &lt;ABR2 RID&gt; · transit area can't be stub","t"],[180,131,"temporary fix for a broken design","m"]]},
-e1e2:{h:176,n:[["r",60,90,"R5"],["a1",200,35,"ASBR1"],["a2",200,145,"ASBR2"],["x",320,90,"External net"]],l:[["r","a1","s","cost 10"],["r","a2","s","cost 40"],["a1","x","d"],["a2","x","d"]],t:[[200,90,"seed 20 on both","m"],[60,140,"E2: 20 vs 20 (tie)","o"],[60,154,"E1: 30 vs 60 → ASBR1","g"],[180,172,"O > O IA > E1 > E2, before cost","t"]]},
+e1e2:{h:176,n:[["r",60,90,"R5"],["a1",200,35,"ASBR1"],["a2",200,145,"ASBR2"],["x",320,90,"External net"]],l:[["r","a1","s","cost 10"],["r","a2","s","cost 40"],["a1","x","d"],["a2","x","d"]],t:[[200,90,"seed 20 on both","m"],[70,140,"E2 tie → cost to ASBR","o"],[60,154,"E1: 30 vs 60 → ASBR1 too","g"],[180,172,"O > O IA > E1 > E2, before cost","t"]]},
 ibgpsh:{h:170,z:[[5,10,350,80,"AS 65000","t"]],n:[["r1",60,50,"R1"],["r2",180,50,"R2 (RR?)"],["r3",300,50,"R3"]],l:[["r1","r2","b","iBGP"],["r2","r3","b","iBGP"]],t:[[180,115,"R2 won't pass R1's iBGP routes to R3 (split horizon)","r"],[180,131,"fix: full mesh, or make R2 a route reflector","g"]]},
 bgppol:{h:210,z:[[110,60,140,70,"","t"]],n:[["ia",60,30,"ISP-A"],["ib",300,30,"ISP-B"],["e1",140,95,"Edge 1"],["e2",220,95,"Edge 2"]],l:[["e1","ia","b","LP 200 → exit"],["e2","ib","s","LP 100"],["e1","e2","s","iBGP"]],t:[[180,146,"AS 65001 (dashed)","t"],[180,164,"outbound: local preference (highest, shared in AS)","g"],[180,180,"inbound: AS-path prepend on the unwanted link","o"],[180,196,"MED: lower wins, same neighbor AS only","m"]]},
 natord:{h:150,n:[["in",60,45,"Inside"],["r",180,45,"Router"],["out",300,45,"Outside"]],l:[["in","r","f"],["r","out","f"]],t:[[180,85,"inside → outside: route, then translate","t"],[180,101,"outside → inside: translate, then route","o"],[180,117,"static PAT: 203.0.113.10:8080 → 10.1.1.10:80","m"],[180,133,"dynamic entries exist only after inside starts","m"]]},
@@ -3825,14 +3825,14 @@ Object.assign(DG,{
 rtsel:{h:170,n:[["a",70,30,"① longest prefix"],["b",180,30,"② lowest AD"],["c",290,30,"③ lowest metric"]],l:[["a","b","f"],["b","c","f"]],t:[[180,65,"connected 0 · static 1 · eBGP 20 · EIGRP 90 · OSPF 110 · iBGP 200","t"],[180,85,"floating static: AD 250 → installs only if the dynamic route goes","g"],[180,105,"ip route … Gi0/0 alone on Ethernet → ARP for every destination","r"],[180,125,"/24 via EIGRP beats /16 via OSPF for 10.1.1.5","o"],[180,145,"summaries add a Null0 discard route","m"]]},
 ospfmisc:{h:150,n:[["c",90,30,"cost = ref BW ÷ BW"],["r",270,30,"router ID"]],t:[[90,58,"ref 100 Mbps → 1G = 10G = 1","r"],[90,72,"auto-cost reference-bandwidth","t"],[90,86,"100000 on every router","t"],[270,58,"① router-id command","t"],[270,72,"② highest loopback","t"],[270,86,"③ highest active IP","t"],[180,120,"change applies after clear ip ospf process","m"],[180,136,"ECMP: 4 paths by default (maximum-paths)","m"]]},
 sdaroles:{h:196,n:[["cc",90,25,"Catalyst Center"],["ise",270,25,"ISE"],["cp",180,85,"Control plane"],["b",290,85,"Border"],["e",80,145,"Edge"],["x",210,145,"Extended node"]],l:[["cc","cp","d"],["ise","cp","d"],["e","cp","t"],["b","cp","t"],["x","e","s"]],t:[[180,180,"LAN automation → IS-IS underlay · FiaB = all roles in one","m"],[180,193,"broadcast suppressed. L2 flooding per pool if needed","m"]]},
-stptime:{h:160,n:[["b",50,30,"Blocking"],["l",140,30,"Listening"],["le",230,30,"Learning"],["f",320,30,"Forwarding"]],l:[["b","l","f","20 s"],["l","le","f","15 s"],["le","f","f","15 s"]],t:[[180,72,"802.1D: up to 50 s after an indirect failure","r"],[180,92,"RSTP states: discarding · learning · forwarding","g"],[180,108,"Rapid PVST+ = one RSTP instance per VLAN","t"],[180,128,"priority shown = configured (×4096) + VLAN ID","m"]]}
+stptime:{h:160,n:[["b",50,30,"Blocking"],["l",140,30,"Listening"],["le",230,30,"Learning"],["f",320,30,"Forwarding"]],l:[["b","l","f","max age 20"],["l","le","f","15 s"],["le","f","f","15 s"]],t:[[180,72,"802.1D: up to 50 s after an indirect failure (max age only then)","r"],[180,92,"RSTP states: discarding · learning · forwarding","g"],[180,108,"Rapid PVST+ = one RSTP instance per VLAN","t"],[180,128,"priority shown = configured (×4096) + VLAN ID","m"]]}
 });
 Object.assign(DG,{
 hyper:{h:186,n:[["t1",60,25,"Type 1"],["t2",180,25,"Type 2"],["ct",300,25,"Containers"]],t:[[60,55,"VMs","t"],[60,71,"hypervisor (ESXi, KVM)","o"],[60,87,"hardware","m"],[180,55,"VMs","t"],[180,71,"hypervisor app","o"],[180,87,"host OS","m"],[180,103,"hardware","m"],[300,55,"apps + libs","t"],[300,71,"runtime (Docker)","o"],[300,87,"shared host kernel","m"],[300,103,"hardware","m"],[180,140,"VM = own OS (vCPU, vRAM, vDisk file, vNIC) · container shares kernel","g"],[180,158,"production = Type 1 · laptops/labs = Type 2","m"]]},
-dot1q:{h:170,n:[["s1",70,40,"SW1"],["s2",290,40,"SW2"]],l:[["s1","s2","b","802.1Q trunk"]],t:[[180,80,"[dst MAC][src MAC][TPID 0x8100 | PCP 3 | DEI 1 | VID 12][type]","o"],[180,98,"native VLAN untagged · must match both ends","t"],[180,114,"allowed VLANs: 'add' keeps the rest · VLAN must exist","m"],[180,130,"access port: data VLAN untagged + voice VLAN tagged","m"],[180,146,"VLANs 1–4094 · 1002–1005 reserved","m"]]},
+dot1q:{h:170,n:[["s1",70,40,"SW1"],["s2",290,40,"SW2"]],l:[["s1","s2","b","802.1Q trunk"]],t:[[180,80,"[dst MAC][src MAC][TPID 0x8100 | PCP 3 | DEI 1 | VID 12][type]","o"],[180,98,"native VLAN untagged · must match both ends","t"],[180,114,"allowed VLANs: 'add' keeps the rest · VLAN must exist to pass","m"],[180,130,"access port: data VLAN untagged + voice VLAN tagged","m"],[180,146,"VLANs 1–4094 · 1002–1005 reserved","m"]]},
 ccflow:{h:170,n:[["d",50,40,"Design"],["p",140,40,"Policy"],["pr",230,40,"Provision"],["a",320,40,"Assurance"]],l:[["d","p","f"],["p","pr","f"],["pr","a","f"]],t:[[50,70,"sites, settings","m"],[140,70,"VNs, SGTs","m"],[230,70,"PnP, SWIM","m"],[320,70,"health, AI","m"],[180,110,"AI Network Analytics: baselines · MRE: root cause","t"],[180,126,"Path Trace · Network Time Travel · AI Assistant","t"],[180,146,"vs box-by-box CLI: consistent, faster MTTR","g"]]},
 apisec:{h:176,n:[["s",55,50,"Script"],["api",305,50,"REST API"]],l:[["s","api","b","HTTPS · TLS verified"]],t:[[180,90,"secret in header (never URL) · from vault/env, not Git","t"],[180,106,"Basic = base64 only · Bearer token expires","o"],[180,122,"401 re-auth · 403 RBAC · 429 back off","r"],[180,138,"least privilege · mTLS · audit logs","g"]]},
-pytypes:{h:170,n:[["l",60,25,"list [ ]"],["d",180,25,"dict { k: v }"],["t",300,25,"tuple ( )"]],t:[[60,52,"ordered, changeable","t"],[60,66,"x[0] first item","m"],[180,52,"key/value","t"],[180,66,"d['name'], d.get()","m"],[300,52,"ordered, fixed","t"],[300,66,"set { } = unique","m"],[180,100,"for d in devices: if …: print(f\"{d['host']}\")","o"],[180,118,"indentation defines blocks · range(1, 4) → 1, 2, 3","m"],[180,136,"requests.get(…).json() → dict/list","m"]]},
+pytypes:{h:170,n:[["l",60,25,"list [ ]"],["d",180,25,"dict { k: v }"],["t",300,25,"tuple ( )"]],t:[[60,52,"ordered, changeable","t"],[60,66,"x[0] first item","m"],[180,52,"key/value","t"],[180,66,"d['name'], d.get()","m"],[300,52,"ordered, fixed","t"],[300,66,"set {1, 2} = unique","m"],[180,100,"for d in devices: if …: print(f\"{d['host']}\")","o"],[180,118,"indentation defines blocks · range(1, 4) → 1, 2, 3","m"],[180,136,"requests.get(…).json() → dict/list","m"]]},
 httpreq:{h:176,n:[["rq",90,25,"Request"],["rs",270,25,"Response"]],t:[[90,55,"method (GET/POST…)","t"],[90,71,"URI + ?query","t"],[90,87,"headers","t"],[90,103,"body (JSON)","t"],[270,55,"status code","o"],[270,71,"headers","t"],[270,87,"body (data/error)","t"],[180,140,"CRUD: POST create · GET read · PUT/PATCH update · DELETE","g"],[180,156,"idempotent: GET, PUT, DELETE · not POST","m"]]}
 });
 
@@ -3843,6 +3843,10 @@ Object.assign(QD,{"A campus replaces Layer 2 trunks between access and distribut
 // ---- v1.9.1 CLI formatting: card answers that are command sequences render one command per line ----
 // key = card front (unchanged, so progress keys stay stable); c = lines (indent = sub-mode); n = note under the block
 const CMD={
+"Run CLI commands from an applet":{c:["action 1.0 cli command \"enable\"","action 2.0 cli command \"configure terminal\"","action 3.0 cli command \"…\""],n:"enable comes first, then the config commands"},
+"Keep debug output off the console":{c:["no logging console","logging buffered 64000 debugging","terminal monitor"],n:"terminal monitor shows the logs in your own VTY session"},
+"Apply a flow monitor":{c:["interface Gi0/1"," ip flow monitor M input"," ipv6 flow monitor M6 input"],n:"use output to watch traffic leaving the interface"},
+"Restrict who can use a router's NTP service":{c:["ntp access-group {peer | serve | serve-only | query-only} ACL"],n:"peer is the most permissive, query-only the least"},
 "YANG module header":{c:["module NAME {"," namespace \"urn:…\";"," prefix p;"," …","}"],n:"semicolons end each YANG statement"},
 "Read a QoS config: where are the actions?":{c:["policy-map NAME"," class X","  priority | bandwidth | police | shape | set"],n:"actions sit under the class inside the policy-map"},
 "Put an interface into a VRF on IOS XE":{c:["vrf definition NAME"," address-family ipv4","interface Gi0/1"," vrf forwarding NAME"," ip address …"],n:"vrf forwarding removes the IP, so add it again"},
@@ -3864,8 +3868,8 @@ const CMD={
 "EtherChannel misconfiguration guard":{c:["spanning-tree etherchannel guard misconfig"],n:"err-disables ports when one side bundles and the other doesn't"},
 "Stop DTP negotiation on a trunk":{c:["interface Gi1/0/1"," switchport mode trunk"," switchport nonegotiate"]},
 "Test reachability to an ISP target every 10 s":{c:["ip sla 1"," icmp-echo 8.8.8.8 source-interface g0/0"," frequency 10","ip sla schedule 1 life forever start-time now"]},
-"Allow only SSH to the VTY lines":{c:["line vty 0 4"," transport input ssh"," login local"],n:"or use an AAA method list instead of login local"},
-"Notify from an applet":{c:["action 1.0 syslog msg \"…\"","action 2.0 mail server … to … subject … body …"]},
+"Allow only SSH to the VTY lines":{c:["line vty 0 15"," transport input ssh"," login local"],n:"or use an AAA method list instead of login local"},
+"Notify from an applet":{c:["action 1.0 syslog msg \"…\"","action 2.0 mail server … to … from … subject … body …"]},
 "OSPFv3: summarize IPv6 routes from an area on the ABR":{c:["router ospfv3 1"," address-family ipv6 unicast","  area 1 range 2001:db8:1::/48"]},
 "EIGRP for IPv6 in named mode":{c:["router eigrp CORE"," address-family ipv6 unicast autonomous-system 10"]},
 "Gateway redundancy for IPv6 hosts with HSRP":{c:["interface Vlan10"," standby version 2"," standby 1 ipv6 autoconfig"]},
@@ -3908,7 +3912,7 @@ const CMD={
 "Named standard ACL":{c:["ip access-list standard MGMT"," permit 10.10.10.0 0.0.0.255"]},
 "MAC ACL on a switch port":{c:["mac access-list extended NAME"," permit host aaaa.bbbb.cccc any","interface Gi1/0/5"," mac access-group NAME in"]},
 "Apply CoPP on a router":{c:["control-plane"," service-policy input COPP-POLICY"]},
-"Switch-to-switch MACsec with a preshared key":{c:["key chain NAME macsec"," key 01","  key-string …","interface Te1/0/1"," mka pre-shared-key key-chain NAME"]},
+"Switch-to-switch MACsec with a preshared key":{c:["key chain NAME macsec"," key 01","  key-string …","  cryptographic-algorithm aes-128-cmac","interface Te1/0/1"," macsec network-link"," mka pre-shared-key key-chain NAME"],n:"both ends need the same CKN (key 01) and CAK"},
 "Python conditionals":{c:["if cond:","    …","elif other:","    …","else:","    …"]},
 "EEM flow control":{c:["action 2.0 if $_cli_result eq \"…\"","action 3.0 else","action 4.0 end"]},
 "Check EEM applets":{c:["show event manager policy registered","show event manager history events"]},
@@ -4314,8 +4318,9 @@ document.getElementById("sq").addEventListener("input",doSearch);
 domains();qFilters();qStart();readiness();coverage();
 
 // ---- versioning: bump APP_VER and add a CHANGELOG entry on every release ----
-const APP_VER="1.9.2",APP_DATE="2026-11-17";
+const APP_VER="1.9.3",APP_DATE="2026-11-18";
 const CHANGELOG=[
+["1.9.3","2026-11-18","Audit of the v1.9.0–1.9.2 changes: 25 fixes. Diagrams: empty Python set syntax, the OSPF E2 tie-break, the STP max-age label, the totally stubby area label and the VLAN note are corrected. CLI blocks: MACsec now includes the cryptographic algorithm and macsec network-link, EEM mail includes from, the VTY example covers lines 0 15, and four answers that split badly now have proper layouts (EEM CLI actions, debug logging, flow monitors, NTP access-group). Text: one factual fix (no cdp enable per interface instead of no cdp run on untrusted edges) and 14 sentences from the semicolon rewrite are smoothed (capitalized iBGP and requests, lowercase command openings, a list split into fragments)."],
 ["1.9.2","2026-11-17","Style: semicolons removed from all study text (about 750 places in cards, questions, explanations, diagrams and the overview pages). Each one is now a new sentence, or a comma inside brackets. Semicolons stay only where they are real syntax, such as YANG statements and router output in exhibits. Two Python questions now show their code as a proper multi-line exhibit. Saved progress carries over."],
 ["1.9.1","2026-11-17","Card answers that are CLI now render as a monospace config block, one command per line, indented by sub-mode, with a hanging indent when a line wraps on phones. Notes move under the block in normal text. 80 command sequences (LISP, GRE/IPsec, VRFs, MST, AAA servers, ACLs, NTP auth, VRRPv3, MACsec, EEM and more) were laid out by hand. Another 100 single commands are detected automatically. Placeholders like &lt;MR address&gt; now display instead of vanishing."],
 ["1.9.0","2026-11-17","Diagrams: 79 new topology and concept diagrams (154 in total), covering routed vs looped access, simplified campus, oversubscription, cloud models, availability, ISSU, SWV dual-active, SD-WAN colors, VPNs, hub-and-spoke and Cloud OnRamp, fabric wireless, SD-Access borders, transit and roles, DSCP, token bucket, WRED, vDS, NFVIS, VRF-lite, RD/RT, IPsec modes, DMVPN, NAT-T, LISP mobility, EVPN, DTP, VTP, LACP, STP cost, timers and link types, Loop Guard, OSPF area types, virtual links, E1/E2, cost and router ID, route selection, iBGP split horizon, BGP policy, NAT order, GLBP, FHRP transports, multicast MAC and RP discovery, ping/traceroute codes, syslog, NetFlow export, SPAN oversubscription, track lists, IBN, Catalyst Center workflows, RESTCONF, NETCONF layers, telemetry, AAA fallback, management access, ACL order, wildcards, CoPP classes, API security, OAuth, ZBFW, MACsec keying, SASE, SGT matrix, hypervisors, 802.1Q, Python types, Python/JSON mapping, YANG trees, HTTP requests and codes, SD-WAN API flow, Ansible, EEM label order. Now 93 % of cards (diagram on the back) and 93 % of questions (diagram in the explanation) show a diagram, up from 7 % and 9 %."],
