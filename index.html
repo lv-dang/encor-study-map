@@ -647,7 +647,8 @@ ip nat inside source <b>static</b> 10.1.1.10 203.0.113.10
   </details>
 
   <details class="sec" data-d="i" data-o="3.3c"><summary>HSRP vs VRRP with tracking <span class="src">OCG</span></summary>
-    <div data-dg="fhrp"></div>
+    <p class="why" style="margin:0 0 4px"><b>HSRP</b></p><div data-dg="fhrp"></div>
+    <p class="why" style="margin:10px 0 4px"><b>VRRP</b></p><div data-dg="vrrp"></div>
     <p class="why" style="margin:10px 0 4px"><b>What's wrong here? STP root ≠ HSRP active</b></p><div data-dg="hsrpstp"></div>
 <pre class="code">track 1 interface g0/1 line-protocol
 <i>! R1 (HSRP active)</i>
@@ -1405,7 +1406,7 @@ const DG={
 tier3:{h:190,n:[["c1",120,20,"Core"],["c2",240,20,"Core"],["d1",120,85,"Distribution"],["d2",240,85,"Distribution"],["a1",60,150,"Access"],["a2",180,150,"Access"],["a3",300,150,"Access"]],l:[["c1","c2"],["c1","d1"],["c2","d2"],["c1","d2","d"],["c2","d1","d"],["d1","d2"],["d1","a1"],["d1","a2"],["d2","a2"],["d2","a3"]],t:[[180,183,"3-tier: a separate core joins the distribution blocks","m"]]},
 leafspine:{h:160,n:[["s1",120,22,"Spine 1"],["s2",240,22,"Spine 2"],["l1",45,110,"Leaf 1"],["l2",135,110,"Leaf 2"],["l3",225,110,"Leaf 3"],["l4",315,110,"Leaf 4"]],l:[["l1","s1"],["l1","s2"],["l2","s1"],["l2","s2"],["l3","s1"],["l3","s2"],["l4","s1"],["l4","s2"]],t:[[180,148,"leaf → spine → leaf = always 2 hops, ECMP over all spines","g"]]},
 ssonsf:{h:170,z:[[10,10,150,120,"One chassis","b"]],n:[["a",85,45,"Active RP"],["s",85,105,"Standby RP"],["n",275,75,"NSF-aware peer"]],l:[["a","s","d","state sync"],["a","n"],["s","n","ga"]],t:[[180,150,"SSO: standby RP already has config + state","b"],[180,164,"NSF: keep forwarding on the old FIB while routing restarts","t"]]},
-fhrp:{h:178,n:[["r1",90,25,"R1 Active pri 110"],["r2",270,25,"R2 Standby pri 100"],["sw",180,85,"Access switch"],["h",180,145,"Host GW 10.1.1.1"]],l:[["r1","sw","b"],["r2","sw","d"],["sw","h"]],t:[[180,29,"VIP .1","g"],[180,172,"track uplink → decrement priority. Preempt to take over","o"]]},
+fhrp:{h:206,n:[["r1",90,25,"R1 Active pri 110"],["r2",270,25,"R2 Standby pri 100"],["sw",180,85,"Access switch"],["h",180,145,"Host GW 10.1.10.1"]],l:[["r1","sw","b"],["r2","sw","d"],["sw","h"]],t:[[180,29,"VIP .1","g"],[180,174,"hello 3 s / hold 10 s · preempt off by default","t"],[180,190,"track uplink → decrement priority. Preempt to take over","o"]]},
 sdwanboot:{h:186,n:[["vb",60,25,"Validator (vBond)"],["vm",180,25,"Manager (vManage)"],["vs",300,25,"Controller (vSmart)"],["e1",80,115,"WAN Edge A"],["e2",280,115,"WAN Edge B"]],l:[["e1","vb","f","①"],["e1","vm","o","②"],["e1","vs","t","③ OMP"],["e2","vs","t"],["e1","e2","b","④ IPsec + BFD"]],t:[[180,150,"① authenticate (certificates), learn controller addresses","o"],[180,164,"② DTLS to Manager: config ③ DTLS to Controller: OMP + TLOCs","t"],[180,178,"④ IPsec data tunnels edge ↔ edge, BFD measures each path","g"]]},
 sdaflow:{h:222,n:[["cp",180,25,"Control plane node (MS/MR)"],["e1",70,95,"Edge 1"],["e2",290,95,"Edge 2"],["ha",70,155,"Host A"],["hb",290,155,"Host B"]],l:[["e2","cp","t","①"],["e1","cp","o","② ③"],["e1","e2","f","④ VXLAN: VN + SGT"],["ha","e1"],["hb","e2"]],t:[[180,188,"① Edge 2 registers Host B (EID → RLOC) with the control plane","t"],[180,202,"② Edge 1 asks where Host B is ③ reply: RLOC = Edge 2","o"],[180,216,"④ Edge 1 tunnels to Edge 2. The VXLAN header keeps VN and SGT","g"]]},
 sdahandoff:{h:200,z:[[5,8,175,130,"SD-Access fabric","t"]],n:[["e",60,45,"Edge"],["b",120,110,"Border"],["f",270,110,"Fusion router"],["ss",270,40,"DHCP · DNS · ISE"],["lg",120,175,"Legacy VLAN 20"]],l:[["e","b"],["b","f","d"],["f","ss"],["b","lg","o","L2 handoff"]],t:[[218,132,"VRF-lite + BGP","d"],[275,150,"fusion router leaks shared","m"],[275,163,"services into each VN","m"]]},
@@ -3759,6 +3760,7 @@ Q0.push(
 // ---- v1.9.0 diagrams for the 800/800 expansion ----
 Object.assign(DG,{
 // ===== 1.x Architecture =====
+vrrp:{h:206,n:[["r1",90,25,"R1 Master pri 110"],["r2",270,25,"R2 Backup pri 100"],["sw",180,85,"Access switch"],["h",180,145,"Host GW 10.1.20.1"]],l:[["r1","sw","b"],["r2","sw","d"],["sw","h"]],t:[[180,29,"VIP .1","g"],[180,174,"only the master advertises · every 1 s to 224.0.0.18","t"],[180,190,"preempt on by default · VIP = own IP → owner, pri 255","o"]]},
 tier2:{h:200,n:[["wan",70,20,"WAN edge"],["inet",290,20,"Internet edge"],["cc1",110,88,"Collapsed core"],["cc2",250,88,"Collapsed core"],["a1",60,155,"Access"],["a2",180,155,"Access"],["a3",300,155,"Access"]],l:[["wan","cc1"],["wan","cc2","d"],["inet","cc2"],["inet","cc1","d"],["cc1","cc2","b"],["cc1","a1"],["cc1","a2"],["cc2","a2"],["cc2","a3"]],t:[[180,190,"one redundant pair does core + distribution · small campus","m"]]},
 racc:{h:170,n:[["d1",95,25,"Distribution 1"],["d2",265,25,"Distribution 2"],["a1",95,105,"Access 1 (GW VLAN 10)"],["a2",265,105,"Access 2 (GW VLAN 20)"]],l:[["d1","a1","b","L3"],["d1","a2","b"],["d2","a1","b"],["d2","a2","b","L3"],["d1","d2","b"]],t:[[180,140,"routed uplinks · ECMP on both · no STP blocking, no FHRP","g"],[180,156,"limit: VLAN 10 can't also live on Access 2","r"]]},
 l2loop:{h:186,n:[["d1",95,25,"Dist 1 (root, HSRP active)"],["d2",265,25,"Dist 2"],["a1",95,105,"Access 1"],["a2",265,105,"Access 2"]],l:[["d1","a1","b"],["d2","a1","x"],["d1","a2","b"],["d2","a2","x"],["d1","d2","b","L2 trunk"]],t:[[180,140,"looped: VLAN 10 spans both access switches","t"],[180,154,"STP blocks one uplink per VLAN (✗) → half the bandwidth idle","r"],[180,168,"U design: VLAN local to one access switch, Dist 1–2 link routed","m"]]},
@@ -3857,6 +3859,14 @@ Object.assign(QD,{"A campus replaces Layer 2 trunks between access and distribut
 // ---- v1.9.7 collapsed-core items → tier2 diagram ----
 Object.assign(CD,{"Small campus, one building: fewest layers, still redundant":"tier2"});
 Object.assign(QD,{"A company has one building with six access switches. It wants to cut cost but keep redundancy. Which design fits?":["e","tier2"]});
+
+// ---- v1.9.8 VRRP role/behavior items → vrrp diagram (override earlier prefix keys) ----
+(function(){
+ const cd={"VRRP timers":"vrrp","VRRP address owner":"vrrp","VRRPv3 configuration":"vrrp"};
+ const qd={"What is the default VRRP behavior?":["e","vrrp"],"Which two statements about VRRP are true? (Choose two)":["e","vrrp"],"R1's interface IP is 10.1.1.1 and the VRRP virtual IP is also 10.1.1.1. What's R1's role?":["e","vrrp"]};
+ Object.entries(cd).forEach(([f,k])=>{Object.keys(CD).forEach(p=>{if(f.startsWith(p)||p.startsWith(f))delete CD[p]});CD[f]=k});
+ Object.entries(qd).forEach(([f,v])=>{Object.keys(QD).forEach(p=>{if(f.startsWith(p)||p.startsWith(f))delete QD[p]});QD[f]=v});
+})();
 
 // ---- v1.9.1 CLI formatting: card answers that are command sequences render one command per line ----
 // key = card front (unchanged, so progress keys stay stable); c = lines (indent = sub-mode); n = note under the block
@@ -4389,8 +4399,9 @@ document.getElementById("sq").addEventListener("input",doSearch);
 domains();qFilters();qStart();readiness();coverage();
 
 // ---- versioning: bump APP_VER and add a CHANGELOG entry on every release ----
-const APP_VER="1.9.7",APP_DATE="2026-11-19";
+const APP_VER="1.9.8",APP_DATE="2026-11-19";
 const CHANGELOG=[
+["1.9.8","2026-11-19","Overview: the HSRP vs VRRP panel now has a VRRP topology next to the HSRP one (master and backup, only the master advertises every 1 s to 224.0.0.18, preempt on by default, the address owner gets priority 255). The HSRP diagram now matches its config snippet (gateway 10.1.10.1) and shows its defaults (hello 3 s, hold 10 s, preempt off). Six VRRP cards and questions about roles, timers, preemption and the owner now show the VRRP diagram."],
 ["1.9.7","2026-11-19","Overview: the campus design panel now shows a separate two-tier (collapsed core) topology next to the three-tier one, with the collapsed-core pair connecting access switches and the WAN and Internet edges. The small-campus card and question now use this diagram."],
 ["1.9.6","2026-11-19","Quiz options: formatting is now consistent within each question. When a question's options are commands, every command option shows as code, and a qualifier such as \"on every VTY line\" stays as text next to it. The Answer line, the \"Why not your pick\" line and the mock review use the same formatting. Choose-two answers now show each answer on its own line instead of joining them with +. Standard ACL lines such as permit 10.1.1.0 0.0.0.255 and deny host 10.2.2.2 are now recognized as commands everywhere. Scrolling: after Next, the quiz now lands just below the tab bar instead of sliding under it, and links that jump to an overview topic stop below the bar too."],
 ["1.9.5","2026-11-19","Diagrams: label collisions fixed in all 154 diagrams. Diagonal link labels now sit beside their line instead of on it, and 10 diagrams got layout fixes (including vDS, fabric wireless, multicast, SD-WAN bring-up, track lists and STP timers). A collision check now runs on every build. Commands: about 110 ellipses inside commands replaced with realistic examples (ip address 172.16.0.1 255.255.255.252, source interface Gi1/0/1) or placeholders where the value is yours (secret &lt;password&gt;, key-string &lt;CAK hex&gt;). Change log: now opens from the version badge next to the title."],
